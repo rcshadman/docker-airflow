@@ -5,7 +5,7 @@
 # SOURCE: https://github.com/puckel/docker-airflow
 
 FROM debian:jessie
-MAINTAINER Puckel_
+MAINTAINER flolas
 
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -31,6 +31,7 @@ RUN set -ex \
         libsasl2-dev \
         libssl-dev \
         libffi-dev \
+	libmysqlclient-dev \
         build-essential \
         libblas-dev \
         liblapack-dev \
@@ -47,14 +48,17 @@ RUN set -ex \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
-    && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
-    && pip install pytz==2015.7 \
+    && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow
+
+RUN  pip install pytz==2015.7 \
     && pip install cryptography \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
-    && pip install psycopg2 \
-    && pip install airflow[celery,postgresql,hive]==$AIRFLOW_VERSION \
+    && pip install JayDeBeApi \
+    && pip install psycopg2
+RUN apt-get install -yqq freetds-dev
+RUN pip install airflow[celery,postgresql,hive,mysql,jdbc,mssql,crypto,gcp_api,hdfs,password]==$AIRFLOW_VERSION \
     && apt-get remove --purge -yqq $buildDeps libpq-dev \
     && apt-get clean \
     && rm -rf \
