@@ -56,9 +56,12 @@ RUN  pip install pytz==2015.7 \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
     && pip install JayDeBeApi \
+    && pip install docker-py \
     && pip install psycopg2
 RUN apt-get install -yqq freetds-dev
-RUN pip install airflow[celery,postgresql,hive,mysql,jdbc,mssql,crypto,gcp_api,hdfs,password]==$AIRFLOW_VERSION \
+RUN apt-get install -y libatlas-base-dev
+RUN easy_install atlas
+RUN pip install -U pip && pip -v install airflow[docker,celery,postgres,hive,mysql,jdbc,mssql,crypto,gcp_api,hdfs,password]==$AIRFLOW_VERSION \
     && apt-get remove --purge -yqq $buildDeps libpq-dev \
     && apt-get clean \
     && rm -rf \
