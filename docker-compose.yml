@@ -13,8 +13,8 @@ rabbitmq:
     ports:
         - "15672:15672"
         - "5672:5672"
-    volumes:
-        - /opt/airflow/rabbitmq:/var/lib/rabbitmq
+#    volumes:
+#        - /opt/airflow/rabbitmq:/var/lib/rabbitmq
     environment:
         - RABBITMQ_DEFAULT_USER=airflow
         - RABBITMQ_DEFAULT_PASS=airflow
