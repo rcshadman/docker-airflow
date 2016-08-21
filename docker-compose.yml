@@ -6,22 +6,8 @@ postgres:
         - POSTGRES_USER=airflow
         - POSTGRES_PASSWORD=airflow
         - POSTGRES_DB=airflow
-
-rabbitmq:
-    image: rabbitmq:3-management
-    restart: always
-    ports:
-        - "15672:15672"
-        - "5672:5672"
-#    volumes:
-#        - /opt/airflow/rabbitmq:/var/lib/rabbitmq
-    environment:
-        - RABBITMQ_DEFAULT_USER=airflow
-        - RABBITMQ_DEFAULT_PASS=airflow
-        - RABBITMQ_DEFAULT_VHOST=airflow
-
 webserver:
-    image: flolas/airflow
+    image: flolas/airflow-le
     restart: always
     volumes:
         - /opt/airflow/dags:/usr/local/airflow/dags
@@ -31,24 +17,11 @@ webserver:
         - "8088:8080"
     links:
         - postgres:postgres
-        - rabbitmq:rabbitmq
-        - worker:worker
         - scheduler:scheduler
     command: webserver
 
-flower:
-    image: flolas/airflow
-    restart: always
-    environment:
-        - AIRFLOW_HOME=/usr/local/airflow
-    ports:
-        - "5556:5556"
-    links:
-        - rabbitmq:rabbitmq
-    command: flower
-
 scheduler:
-    image: flolas/airflow
+    image: flolas/airflow-le
     restart: always
     volumes:
         - /opt/airflow/dags:/usr/local/airflow/dags
@@ -56,17 +29,4 @@ scheduler:
         - AIRFLOW_HOME=/usr/local/airflow
     links:
         - postgres:postgres
-        - rabbitmq:rabbitmq
     command: scheduler -n 5
-
-worker:
-    image: flolas/airflow
-    restart: always
-    volumes:
-        - /opt/airflow/dags:/usr/local/airflow/dags
-    environment:
-        - AIRFLOW_HOME=/usr/local/airflow
-    links:
-        - postgres:postgres
-        - rabbitmq:rabbitmq
-    command: worker
