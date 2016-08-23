@@ -35,6 +35,7 @@ RUN set -ex \
         build-essential \
         libblas-dev \
         liblapack-dev \
+        libatlas-base-dev \
     ' \
     && echo "deb http://http.debian.net/debian jessie-backports main" >/etc/apt/sources.list.d/backports.list \
     && apt-get update -yqq \
@@ -44,6 +45,8 @@ RUN set -ex \
         curl \
         netcat \
         locales \
+	freetds-dev \
+	default-jre \
     && apt-get install -yqq -t jessie-backports python-requests libpq-dev \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
@@ -56,8 +59,8 @@ RUN  pip install pytz==2015.7 \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
     && pip install JayDeBeApi \
+    && pip install docker-py \
     && pip install psycopg2
-RUN apt-get install -yqq freetds-dev
 RUN pip install airflow[celery,postgresql,hive,mysql,jdbc,mssql,crypto,gcp_api,hdfs,password]==$AIRFLOW_VERSION \
     && apt-get remove --purge -yqq $buildDeps libpq-dev \
     && apt-get clean \
@@ -71,6 +74,11 @@ RUN pip install airflow[celery,postgresql,hive,mysql,jdbc,mssql,crypto,gcp_api,h
 
 COPY script/entrypoint.sh ${AIRFLOW_HOME}/entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
+COPY mysql_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/ 
+COPY docker_operator.py /usr/local/lib/python2.7/dist-packages/airflow/operators/
+COPY hipchat_operator.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
+
+RUN mkdir ${AIRFLOW_HOME}/files
 
 RUN chown -R airflow: ${AIRFLOW_HOME} \
     && chmod +x ${AIRFLOW_HOME}/entrypoint.sh

@@ -4,7 +4,8 @@ postgres:
         - POSTGRES_USER=airflow
         - POSTGRES_PASSWORD=airflow
         - POSTGRES_DB=airflow
-
+    volumes:
+        - /opt/airflow/data:/var/lib/postgresql/data
 rabbitmq:
     image: rabbitmq:3-management
     restart: always
@@ -17,14 +18,15 @@ rabbitmq:
         - RABBITMQ_DEFAULT_VHOST=airflow
 
 webserver:
-    image: flolas/docker-airflow
+    image: bci/airflow:1.7
     restart: always
-    # volumes:
-    #     - /localpath/to/dags:/usr/local/airflow/dags
+    volumes:
+        - /opt/airflow/dags:/usr/local/airflow/dags
+        - /opt/airflow/files:/usr/local/airflow/files
     environment:
         - AIRFLOW_HOME=/usr/local/airflow
     ports:
-        - "8088:8080"
+        - "161.131.194.98:8089:8080"
     links:
         - postgres:postgres
         - rabbitmq:rabbitmq
@@ -33,21 +35,22 @@ webserver:
     command: webserver
 
 flower:
-    image: flolas/docker-airflow
+    image: bci/airflow:1.7
     restart: always
     environment:
         - AIRFLOW_HOME=/usr/local/airflow
     ports:
-        - "5555:5555"
+        - "161.131.194.98:5556:5555"
     links:
         - rabbitmq:rabbitmq
     command: flower
 
 scheduler:
-    image: flolas/docker-airflow
+    image: bci/airflow:1.7
     restart: always
     volumes:
-        - /opt/dags:/usr/local/airflow/dags
+        - /opt/airflow/dags:/usr/local/airflow/dags
+        - /opt/airflow/files:/usr/local/airflow/files
     environment:
         - AIRFLOW_HOME=/usr/local/airflow
     links:
@@ -56,10 +59,11 @@ scheduler:
     command: scheduler -n 5
 
 worker:
-    image: flolas/docker-airflow
+    image: bci/airflow:1.7
     restart: always
     volumes:
-        - /opt/dags:/usr/local/airflow/dags
+        - /opt/airflow/dags:/usr/local/airflow/dags
+        - /opt/airflow/files:/usr/local/airflow/files
     environment:
         - AIRFLOW_HOME=/usr/local/airflow
     links:
