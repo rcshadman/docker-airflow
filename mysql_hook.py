@@ -106,7 +106,8 @@ class MySqlHook(DbApiHook):
         logging.info('Remote file : {}'.format(remote_filepath))
         try:
             conn_FTP.store_file(temp_filepath, tmp_file)
-        except:
+        except exception as e:
+	    print(str(e))
             logging.warning("Failed to store file")
             conn_FTP.delete_directory(tmp_dir_remote)
             raise
@@ -127,6 +128,7 @@ class MySqlHook(DbApiHook):
             cur.execute("""
                 LOAD DATA INFILE '{remote_filepath}'
                 INTO TABLE {database}.{table}
+		CHARACTER SET UTF8
                 FIELDS TERMINATED BY '{sep}'
                 """.format(**locals()))
             conn.commit()

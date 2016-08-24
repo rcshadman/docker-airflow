@@ -1,5 +1,7 @@
 postgres:
     image: postgres
+    volumes: 
+        - /opt/airflow/data:/var/lib/postgresql/data
     environment:
         - POSTGRES_USER=airflow
         - POSTGRES_PASSWORD=airflow
@@ -12,17 +14,26 @@ rabbitmq:
     ports:
         - "15672:15672"
         - "5672:5672"
+#    volumes:
+#        - /opt/airflow/rabbitmq:/var/lib/rabbitmq
     environment:
         - RABBITMQ_DEFAULT_USER=airflow
         - RABBITMQ_DEFAULT_PASS=airflow
         - RABBITMQ_DEFAULT_VHOST=airflow
 
 webserver:
+<<<<<<< HEAD
     image: bci/airflow:1.7
     restart: always
     volumes:
         - /opt/airflow/dags:/usr/local/airflow/dags
         - /opt/airflow/files:/usr/local/airflow/files
+=======
+    image: flolas/airflow
+    restart: always
+    volumes:
+        - /opt/airflow/dags:/usr/local/airflow/dags
+>>>>>>> 7a380b603500cc26a50bb2cc9d37b3ecc6e099a7
     environment:
         - AIRFLOW_HOME=/usr/local/airflow
     ports:
@@ -35,22 +46,37 @@ webserver:
     command: webserver
 
 flower:
+<<<<<<< HEAD
     image: bci/airflow:1.7
+=======
+    image: flolas/airflow
+>>>>>>> 7a380b603500cc26a50bb2cc9d37b3ecc6e099a7
     restart: always
     environment:
         - AIRFLOW_HOME=/usr/local/airflow
     ports:
+<<<<<<< HEAD
         - "161.131.194.98:5556:5555"
+=======
+        - "5556:5556"
+>>>>>>> 7a380b603500cc26a50bb2cc9d37b3ecc6e099a7
     links:
         - rabbitmq:rabbitmq
     command: flower
 
 scheduler:
+<<<<<<< HEAD
     image: bci/airflow:1.7
     restart: always
     volumes:
         - /opt/airflow/dags:/usr/local/airflow/dags
         - /opt/airflow/files:/usr/local/airflow/files
+=======
+    image: flolas/airflow
+    restart: always
+    volumes:
+        - /opt/airflow/dags:/usr/local/airflow/dags
+>>>>>>> 7a380b603500cc26a50bb2cc9d37b3ecc6e099a7
     environment:
         - AIRFLOW_HOME=/usr/local/airflow
     links:
@@ -59,11 +85,18 @@ scheduler:
     command: scheduler -n 5
 
 worker:
+<<<<<<< HEAD
     image: bci/airflow:1.7
     restart: always
     volumes:
         - /opt/airflow/dags:/usr/local/airflow/dags
         - /opt/airflow/files:/usr/local/airflow/files
+=======
+    image: flolas/airflow
+    restart: always
+    volumes:
+        - /opt/airflow/dags:/usr/local/airflow/dags
+>>>>>>> 7a380b603500cc26a50bb2cc9d37b3ecc6e099a7
     environment:
         - AIRFLOW_HOME=/usr/local/airflow
     links:
