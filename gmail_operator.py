@@ -77,8 +77,8 @@ class GmailAPIOperator(BaseOperator):
         pass
     def execute(self, method):
         def call_method(cl, method):
-            methods = len(method.split("."))
-            if len(method.split(".")) > 1:
+            methods = method.split(".")
+            if len(methods) > 1:
                 for method in methods:
                     if hasattr(cl, method):
                         cl = getattr(cl, method)
