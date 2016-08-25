@@ -75,7 +75,18 @@ class GmailAPIOperator(BaseOperator):
         a prepare_request method call which sets self.method, self.url, and self.body.
         """
         pass
-    def execute(self, context):
+    def execute(self, method):
+        def call_method(cl, method):
+            methods = len(method.split("."))
+            if len(method.split(".")) > 1:
+                for method in methods:
+                    if hasattr(cl, method):
+                        cl = getattr(cl, method)
+                    else:
+                        logging.warn("Error")
+                return cl
+            elif hasattr(cl, method):
+                return getattr(cl, method)
         #TODO: Fix this shit
         """
         Execute service object
@@ -90,11 +101,10 @@ class GmailAPIOperator(BaseOperator):
                                        )
                                        )
         try:
-            self.service.context.execute()
+            call_method(self.service, method)
         except errors.HttpError, error:
             logging.error('GMail API call failed: %s', error)
             raise AirflowException('GMail API call failed: %s', error)
-
     def get_credentials(self):
         """Gets valid user credentials from storage.
 
