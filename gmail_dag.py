@@ -1,4 +1,4 @@
-from airflow.operators.contrib.gmail_operator import GmailAPISendMailOperator
+from airflow.contrib.operators.gmail_operator import GmailAPISendMailOperator
 from datetime import datetime, timedelta
 seven_days_ago = datetime.combine(datetime.today() - timedelta(1),
                                   datetime.min.time())
