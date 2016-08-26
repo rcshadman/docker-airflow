@@ -121,7 +121,8 @@ class GmailAPIOperator(BaseOperator):
         if not credentials or credentials.invalid:
             flow = client.flow_from_clientsecrets(self.client_secret, self.scope)
             flow.user_agent = self.app_name
-            self.credentials = tools.run(flow, store)
+            flags = tools.argparser.parse_args(args=[])
+            self.credentials = tools.run_flow(flow, store, flags)
             logging.info('Storing credentials to ' + credential_path)
 
 
