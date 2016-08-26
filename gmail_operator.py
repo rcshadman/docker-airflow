@@ -97,7 +97,7 @@ class GmailAPIOperator(BaseOperator):
                                        )
                                        )
         try:
-            call_method(self.service, self.method)
+            call_method(self.service, self.method).execute()
         except errors.HttpError, error:
             logging.error('GMail API call failed: %s', error)
             raise AirflowException('GMail API call failed: %s', error)
