@@ -168,4 +168,4 @@ class GmailAPISendMailOperator(GmailAPIOperator):
         self.request = json.dumps(dict(
             (unicode(k).encode('utf-8'), unicode(v).encode('utf-8')) for k, v in self.request if v))
         logging.info(self.request)
-        self.method = 'users().messages().send(userId=me, body=' + self.request + ')'
+        self.method = 'users().messages().send(userId=me, body=' + self.request + ') '
