@@ -70,7 +70,7 @@ class GmailAPIOperator(BaseOperator):
         a prepare_request method call which sets self.method, self.url, and self.body.
         """
         pass
-    def execute(self, method):
+    def execute(self, context, method):
         def call_method(cl, method):
             methods = method.split(".")
             if len(methods) > 1:
