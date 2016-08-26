@@ -96,7 +96,10 @@ class GmailAPIOperator(BaseOperator):
                                            httplib2.Http()
                                        )
                                        )
+        self.prepare_request()
         try:
+            logging.info(self.service)
+            logging.info(self.method)
             call_method(self.service, self.method).execute()
         except errors.HttpError, error:
             logging.error('GMail API call failed: %s', error)
@@ -117,8 +120,8 @@ class GmailAPIOperator(BaseOperator):
         credential_path = os.path.join(credential_dir, self.credentials_file)
 
         store = oauth2client.file.Storage(credential_path)
-        credentials = store.get()
-        if not credentials or credentials.invalid:
+        self.credentials = store.get()
+        if not self.credentials or self.credentials.invalid:
             flow = client.flow_from_clientsecrets(self.client_secret, self.scope)
             flow.user_agent = self.app_name
             flags = tools.argparser.parse_args(args=['--noauth_local_webserver'])
@@ -163,3 +166,4 @@ class GmailAPISendMailOperator(GmailAPIOperator):
         message['subject'] = self.subject
         self.request = {'raw': base64.urlsafe_b64encode(message.as_string())}
         self.method = 'users().messages().send(userId=me, body=' + self.request + ')'
+        logging.info(self.method)
