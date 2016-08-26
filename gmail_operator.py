@@ -54,6 +54,7 @@ class GmailAPIOperator(BaseOperator):
                  **kwargs):
         super(GmailAPIOperator, self).__init__(*args, **kwargs)
         self.request = None
+        self.method = None
         self.scope = scope
         self.client_secret = client_secret
         self.credentials_file = credentials_file
@@ -70,7 +71,7 @@ class GmailAPIOperator(BaseOperator):
         a prepare_request method call which sets self.method, self.url, and self.body.
         """
         pass
-    def execute(self, context, method):
+    def execute(self, context):
         def call_method(cl, method):
             methods = method.split(".")
             if len(methods) > 1:
@@ -96,7 +97,7 @@ class GmailAPIOperator(BaseOperator):
                                        )
                                        )
         try:
-            call_method(self.service, method)
+            call_method(self.service, self.method)
         except errors.HttpError, error:
             logging.error('GMail API call failed: %s', error)
             raise AirflowException('GMail API call failed: %s', error)
@@ -144,6 +145,7 @@ class GmailAPISendMailOperator(GmailAPIOperator):
         self.subject = subject
         self.message = message
         self.scope = scope
+        self.method = None
 
     def prepare_request(self):
         """Create a message for an email.
@@ -159,3 +161,4 @@ class GmailAPISendMailOperator(GmailAPIOperator):
         message['from'] = self.sender
         message['subject'] = self.subject
         self.request = {'raw': base64.urlsafe_b64encode(message.as_string())}
+        self.method = 'users().messages().send(userId=me, body=' + self.request + ')'
