@@ -23,4 +23,5 @@ t1 = GmailAPISendMailOperator(
     sender='felipe.lolas@bci.cl',
     message='prueba',
     subject='prueba',
+    credentials_file='credentials.json',
     dag=dag)

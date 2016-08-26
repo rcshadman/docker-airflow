@@ -44,9 +44,6 @@ class GmailAPIOperator(BaseOperator):
     """
     @apply_defaults
     def __init__(self,
-                 request,
-                 service,
-                 credentials,
                  credentials_file,
                  api='gmail',
                  api_version="v1",
@@ -57,12 +54,10 @@ class GmailAPIOperator(BaseOperator):
                  **kwargs):
         super(GmailAPIOperator, self).__init__(*args, **kwargs)
         self.request = None
-        self.scope =  None
-        self.credentials = credentials
+        self.scope = scope
         self.client_secret = client_secret
         self.credentials_file = credentials_file
         self.app_name = app_name
-        self.service = service
         self.api_version = api_version
         self.api = api
 
@@ -142,7 +137,7 @@ class GmailAPISendMailOperator(GmailAPIOperator):
     ui_color = '#2980b9'
 
     @apply_defaults
-    def __init__(self, to, sender, subject, message,scope ='https://www.googleapis.com/auth/gmail.compose', *args, **kwargs):
+    def __init__(self, to, sender, subject, message, scope ='https://www.googleapis.com/auth/gmail.compose', *args, **kwargs):
         super(GmailAPISendMailOperator, self).__init__(*args, **kwargs)
         self.to = to
         self.sender = sender
