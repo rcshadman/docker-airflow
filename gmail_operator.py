@@ -44,9 +44,6 @@ class GmailAPIOperator(BaseOperator):
     """
     @apply_defaults
     def __init__(self,
-                 request,
-                 service,
-                 credentials,
                  credentials_file,
                  api='gmail',
                  api_version="v1",
@@ -57,12 +54,11 @@ class GmailAPIOperator(BaseOperator):
                  **kwargs):
         super(GmailAPIOperator, self).__init__(*args, **kwargs)
         self.request = None
-        self.scope =  None
-        self.credentials = credentials
+        self.method = None
+        self.scope = scope
         self.client_secret = client_secret
         self.credentials_file = credentials_file
         self.app_name = app_name
-        self.service = service
         self.api_version = api_version
         self.api = api
 
@@ -75,7 +71,7 @@ class GmailAPIOperator(BaseOperator):
         a prepare_request method call which sets self.method, self.url, and self.body.
         """
         pass
-    def execute(self, method):
+    def execute(self, context):
         def call_method(cl, method):
             methods = method.split(".")
             if len(methods) > 1:
@@ -101,7 +97,7 @@ class GmailAPIOperator(BaseOperator):
                                        )
                                        )
         try:
-            call_method(self.service, method)
+            call_method(self.service, self.method).execute()
         except errors.HttpError, error:
             logging.error('GMail API call failed: %s', error)
             raise AirflowException('GMail API call failed: %s', error)
@@ -142,13 +138,14 @@ class GmailAPISendMailOperator(GmailAPIOperator):
     ui_color = '#2980b9'
 
     @apply_defaults
-    def __init__(self, to, sender, subject, message,scope ='https://www.googleapis.com/auth/gmail.compose', *args, **kwargs):
+    def __init__(self, to, sender, subject, message, scope ='https://www.googleapis.com/auth/gmail.compose', *args, **kwargs):
         super(GmailAPISendMailOperator, self).__init__(*args, **kwargs)
         self.to = to
         self.sender = sender
         self.subject = subject
         self.message = message
         self.scope = scope
+        self.method = None
 
     def prepare_request(self):
         """Create a message for an email.
@@ -164,3 +161,4 @@ class GmailAPISendMailOperator(GmailAPIOperator):
         message['from'] = self.sender
         message['subject'] = self.subject
         self.request = {'raw': base64.urlsafe_b64encode(message.as_string())}
+        self.method = 'users().messages().send(userId=me, body=' + self.request + ')'
