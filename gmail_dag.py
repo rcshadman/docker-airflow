@@ -30,9 +30,9 @@ html_template = '''
                <td>ñañañañañaa</td>
         </tr>
 </table>
-'''
+'''.encode(unicode)
 
-mail_template = '''Hola como estas ñañañañañañ óé <br>'''
+mail_template = '''Hola como estas ñañañañañañ óé <br>'''.encode(unicode)
 t1 = GmailAPISendMailOperator(
     task_id='Send_Mail',
     to=['felipe.lolas@bci.cl','felipe.elias013@gmail.com'],
@@ -76,7 +76,16 @@ t5 = GmailAPISendMailOperator(
     message=mail_template,
     dag=dag)
 
+t6 = GmailAPISendMailOperator(
+    task_id='Send_Mail_Attachment_t',
+    to='felipe.lolas@bci.cl',
+    sender='felipe.lolas@bci.cl',
+    subject='(Airflow) Proceso automatico: Journey Consumo Attachment',
+    message="asdasdsasaasdásd",
+    dag=dag)
+
 t1 >> t2
 t2 >> t3
 t3 >> t4
 t4 >> t5
+t5 >> t6
