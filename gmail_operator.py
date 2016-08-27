@@ -136,7 +136,7 @@ class GmailAPISendMailOperator(GmailAPIOperator):
          """
         def attach_file(file, message):
             """
-                Attachment upload (Multipart)
+                Attachment upload
              """
             content_type, encoding = mimetypes.guess_type(file)
             if content_type is None or encoding is not None:
@@ -166,8 +166,8 @@ class GmailAPISendMailOperator(GmailAPIOperator):
             message = MIMEMultipart('alternative')
             plain_msg = MIMEText(self.message, 'plain')
             html_msg = MIMEText(self.html_content, 'html')
-            message.attach(html_msg)
             message.attach(plain_msg)
+            message.attach(html_msg)
         else:
             message = MIMEText(self.message)
         if self.attachment:
