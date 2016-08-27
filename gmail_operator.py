@@ -83,7 +83,7 @@ class GmailAPIOperator(BaseOperator):
                     cl = getattr(cl, method)(**kwargs)
                     pprint.pprint(cl)
                 else:
-                    cl = getattr(cl, method)
+                    cl = getattr(cl, method)()
                     pprint.pprint(cl)
             return cl
         #TODO: Fix this shit
@@ -132,9 +132,6 @@ class GmailAPIOperator(BaseOperator):
             flags = tools.argparser.parse_args(args=['--noauth_local_webserver'])
             self.credentials = tools.run_flow(flow, store, flags)
             logging.info('Storing credentials to ' + credential_path)
-
-
-
 class GmailAPISendMailOperator(GmailAPIOperator):
     """
     Send mail using GMail API
@@ -174,9 +171,9 @@ class GmailAPISendMailOperator(GmailAPIOperator):
         #    (unicode(k).encode('utf-8'), unicode(v).encode('utf-8')) for k, v in self.request if v))
         #logging.info(self.request)
         self.methods = [
-            'users()',
-            'messages()',
-            ('send()',{
+            'users',
+            'messages',
+            ('send',{
                     'userId' : 'me',
                     'body': self.request
                  })
