@@ -180,7 +180,7 @@ class GmailAPISendMailOperator(GmailAPIOperator):
         message['to'] = self.to
         message['from'] = self.sender
         message['subject'] = self.subject
-        self.request = {'raw': base64.urlsafe_b64encode(message.as_string())}
+        self.request = {'raw': base64.urlsafe_b64encode(message.as_string().encode('utf-8'))}
         self.methods = [
             'users',
             'messages',
