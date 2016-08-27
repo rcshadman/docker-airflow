@@ -34,9 +34,9 @@ html_template = '''
 mail_template = '''Hola como estas <br>'''
 t1 = GmailAPISendMailOperator(
     task_id='Send_Mail',
-    to=['felipe.lolas@bci.cl','flolas@bci.cl'],
+    to=['felipe.lolas@bci.cl','felipe.elias013@gmail.com'],
     sender='felipe.lolas@bci.cl',
-    subject='(Airflow) Proceso automatico: Journey Consumo',
+    subject='(Airflow) Proceso automatico',
     message=mail_template,
     dag=dag)
 
@@ -50,7 +50,7 @@ t2 = GmailAPISendMailOperator(
     dag=dag)
 
 t3 = GmailAPISendMailOperator(
-    task_id='Send_Mail_Attachment_multiple',
+    task_id='Send_Mail_Attachment_Multiple',
     to='felipe.lolas@bci.cl',
     sender='felipe.lolas@bci.cl',
     subject='(Airflow) Proceso automatico: Journey Consumo Attachment',

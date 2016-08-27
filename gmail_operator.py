@@ -36,9 +36,6 @@ class GmailAPIOperator(BaseOperator):
     """
     Base Gmail Operator.
     All derived Gmail operators reference from Googles GMail API's official REST API documentation
-    at ----. Before using any GMail API operators you need
-    to get an authentication token at ----
-    In the future additional Gmail operators will be derived from this class as well.
     """
     @apply_defaults
     def __init__(self,
@@ -118,7 +115,6 @@ class GmailAPIOperator(BaseOperator):
 class GmailAPISendMailOperator(GmailAPIOperator):
     """
     Send mail using GMail API
-    More info:
     """
     template_fields = ('to','subject', 'message')
     template_ext = ('.html',)
@@ -159,18 +155,21 @@ class GmailAPISendMailOperator(GmailAPIOperator):
                 msg = MIMEAudio(fp.read(), _subtype=sub_type)
                 fp.close()
             else:
-                fp = open(self.attachment, 'rb')
+                fp = open(file, 'rb')
                 msg = MIMEBase(main_type, sub_type)
                 msg.set_payload(fp.read())
                 fp.close()
             filename = os.path.basename(file)
             msg.add_header('Content-Disposition', 'attachment', filename=filename)
             message.attach(msg)
-        message = MIMEMultipart('alternative')
-        msg = MIMEText(self.message, 'plain')
-        message.attach(msg)
-        msg = MIMEText(self.html_content, 'html')
-        message.attach(msg)
+        if self.html_content:
+            message = MIMEMultipart('alternative')
+            plain_msg = MIMEText(self.message, 'plain')
+            html_msg = MIMEText(self.html_content, 'html')
+            message.attach(html_msg)
+            message.attach(plain_msg)
+        else:
+            message = MIMEText(self.message)
         if self.attachment:
             if isinstance(self.attachment, list):
                 for file in self.attachment:
