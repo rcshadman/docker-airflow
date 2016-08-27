@@ -17,6 +17,7 @@ from airflow.models import BaseOperator
 from airflow.exceptions import AirflowException
 import logging
 import httplib2
+import pprint
 import json
 from apiclient import discovery
 import oauth2client
@@ -74,12 +75,17 @@ class GmailAPIOperator(BaseOperator):
         pass
     def execute(self, context):
         def call_methods(cl, methods):
+            pprint.pprint(methods)
             for method in methods:
                 if isinstance(method, tuple):
                     method, kwargs = method
+                    pprint.pprint(method)
+                    pprint.pprint(kwargs)
                     cl = getattr(cl, method)(**kwargs)
+                    pprint.pprint(cl)
                 else:
                     cl = getattr(cl, method)
+                    pprint.pprint(cl)
             return cl
         #TODO: Fix this shit
         """
