@@ -4,7 +4,6 @@ from airflow.contrib.operators.gmail_operator import GmailAPISendMailOperator
 from datetime import datetime, timedelta
 seven_days_ago = datetime.combine(datetime.today() - timedelta(1),
                                   datetime.min.time())
-
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -24,15 +23,15 @@ html_template = '''
                <td>Header</td>
         </tr>
         <tr>
-               <td>hóóóóla</td>
+               <td></td>
         </tr>
         <tr>
-               <td>ñañañañañaa</td>
+               <td></td>
         </tr>
 </table>
-'''.encode('unicode')
+'''
 
-mail_template = '''Hola como estas ñañañañañañ óé <br>'''.encode('unicode')
+mail_template = '''Hola como estas <br>'''
 t1 = GmailAPISendMailOperator(
     task_id='Send_Mail',
     to=['felipe.lolas@bci.cl','felipe.elias013@gmail.com'],
