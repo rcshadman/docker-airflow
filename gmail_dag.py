@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from airflow import DAG
 from airflow.contrib.operators.gmail_operator import GmailAPISendMailOperator
 from datetime import datetime, timedelta
