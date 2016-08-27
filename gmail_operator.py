@@ -163,10 +163,8 @@ class GmailAPISendMailOperator(GmailAPIOperator):
             msg.add_header('Content-Disposition', 'attachment', filename=filename)
             message.attach(msg)
         if self.html_content:
-            message = MIMEMultipart('alternative')
-            plain_msg = MIMEText(self.message, 'plain')
+            message = MIMEMultipart()
             html_msg = MIMEText(self.html_content, 'html')
-            message.attach(plain_msg)
             message.attach(html_msg)
         else:
             message = MIMEText(self.message)
@@ -176,8 +174,6 @@ class GmailAPISendMailOperator(GmailAPIOperator):
                     attach_file(file, message)
             else:
                 attach_file(self.attachment, message)
-        else:
-            logging.warn("No messsage or html content to send")
         if isinstance(self.to, list):
             self.to = ", ".join(self.to)
         message['to'] = self.to
