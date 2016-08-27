@@ -17,6 +17,7 @@ from airflow.models import BaseOperator
 from airflow.exceptions import AirflowException
 import logging
 import httplib2
+import json
 from apiclient import discovery
 import oauth2client
 from oauth2client import client
@@ -54,7 +55,7 @@ class GmailAPIOperator(BaseOperator):
                  **kwargs):
         super(GmailAPIOperator, self).__init__(*args, **kwargs)
         self.request = None
-        self.method = None
+        self.methods = None
         self.scope = scope
         self.client_secret = client_secret
         self.credentials_file = credentials_file
@@ -72,17 +73,14 @@ class GmailAPIOperator(BaseOperator):
         """
         pass
     def execute(self, context):
-        def call_method(cl, method):
-            methods = method.split(".")
-            if len(methods) > 1:
-                for method in methods:
-                    if hasattr(cl, method):
-                        cl = getattr(cl, method)
-                    else:
-                        logging.warn("Error")
-                return cl
-            elif hasattr(cl, method):
-                return getattr(cl, method)
+        def call_methods(cl, methods):
+            for method in methods:
+                if isinstance(method, tuple):
+                    method, kwargs = method
+                    cl = getattr(cl, method)(**kwargs)
+                else:
+                    cl = getattr(cl, method)
+        return cl
         #TODO: Fix this shit
         """
         Execute service object
@@ -99,8 +97,10 @@ class GmailAPIOperator(BaseOperator):
         self.prepare_request()
         try:
             logging.info(self.service)
-            logging.info(self.method)
-            call_method(self.service, self.method).execute()
+            logging.info(self.methods)
+            request = call_methods(self.service, self.methods)
+            response = request.execute()
+            logging.info(response)
         except errors.HttpError, error:
             logging.error('GMail API call failed: %s', error)
             raise AirflowException('GMail API call failed: %s', error)
@@ -149,7 +149,7 @@ class GmailAPISendMailOperator(GmailAPIOperator):
         self.subject = subject
         self.message = message
         self.scope = scope
-        self.method = None
+        self.methods = None
 
     def prepare_request(self):
         """Create a message for an email.
@@ -165,7 +165,14 @@ class GmailAPISendMailOperator(GmailAPIOperator):
         message['from'] = self.sender
         message['subject'] = self.subject
         self.request = {'raw': base64.urlsafe_b64encode(message.as_string())}
-        self.request = json.dumps(dict(
-            (unicode(k).encode('utf-8'), unicode(v).encode('utf-8')) for k, v in self.request if v))
-        logging.info(self.request)
-        self.method = 'users().messages().send(userId=me, body=' + self.request + ') '
+        #self.request = json.dumps(dict(
+        #    (unicode(k).encode('utf-8'), unicode(v).encode('utf-8')) for k, v in self.request if v))
+        #logging.info(self.request)
+        self.methods = [
+            'users',
+            'messages',
+            ('send',{
+                    'userId' : 'me',
+                    'body': self.request
+                 })
+        ]
