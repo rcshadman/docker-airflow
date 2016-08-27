@@ -35,17 +35,26 @@ t1 = GmailAPISendMailOperator(
     task_id='Send_Mail',
     to=['felipe.lolas@bci.cl','flolas@bci.cl'],
     sender='felipe.lolas@bci.cl',
-    message='(Airflow) Proceso automatico: Journey Consumo',
-    subject=html_template,
+    subject='(Airflow) Proceso automatico: Journey Consumo',
+    message=html_template,
     dag=dag)
 
 t2 = GmailAPISendMailOperator(
     task_id='Send_Mail_Attachment',
     to='felipe.lolas@bci.cl',
     sender='felipe.lolas@bci.cl',
-    message='(Airflow) Proceso automatico: Journey Consumo Attachment',
-    subject=html_template,
+    subject='(Airflow) Proceso automatico: Journey Consumo Attachment',
+    message=html_template,
     attachment='client_secret.json',
+    dag=dag)
+
+t3 = GmailAPISendMailOperator(
+    task_id='Send_Mail_Attachment',
+    to='felipe.lolas@bci.cl',
+    sender='felipe.lolas@bci.cl',
+    subject='(Airflow) Proceso automatico: Journey Consumo Attachment',
+    message=html_template,
+    attachment=['client_secret.json','client_secret.json','client_secret.json'],
     dag=dag)
 
 t1 >> t2

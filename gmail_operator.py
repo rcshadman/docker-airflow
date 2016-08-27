@@ -137,27 +137,24 @@ class GmailAPISendMailOperator(GmailAPIOperator):
     def prepare_request(self):
         """Create a message for an email.
          """
-        if self.attachment:
+        def attach_file(file, message):
             """
                 Attachment upload (Multipart)
              """
-            message = MIMEMultipart()
-            msg = MIMEText(self.message)
-            message.attach(msg)
-            content_type, encoding = mimetypes.guess_type(self.attachment)
+            content_type, encoding = mimetypes.guess_type(file)
             if content_type is None or encoding is not None:
                 content_type = 'application/octet-stream'
             main_type, sub_type = content_type.split('/', 1)
             if main_type == 'text':
-                fp = open(self.attachment, 'rb')
+                fp = open(file, 'rb')
                 msg = MIMEText(fp.read(), _subtype=sub_type)
                 fp.close()
             elif main_type == 'image':
-                fp = open(self.attachment, 'rb')
+                fp = open(file, 'rb')
                 msg = MIMEImage(fp.read(), _subtype=sub_type)
                 fp.close()
             elif main_type == 'audio':
-                fp = open(self.attachment, 'rb')
+                fp = open(file, 'rb')
                 msg = MIMEAudio(fp.read(), _subtype=sub_type)
                 fp.close()
             else:
@@ -165,14 +162,25 @@ class GmailAPISendMailOperator(GmailAPIOperator):
                 msg = MIMEBase(main_type, sub_type)
                 msg.set_payload(fp.read())
                 fp.close()
-            filename = os.path.basename(self.attachment)
+            filename = os.path.basename(file)
             msg.add_header('Content-Disposition', 'attachment', filename=filename)
             message.attach(msg)
+        if self.attachment:
+            message = MIMEMultipart()
+            msg = MIMEText(self.message)
+            message.attach(msg)
+            if isinstance(self.attachment, list):
+                for file in self.attachment:
+                    attach_file(file, message)
+            else:
+                attach_file(self.attachment, message)
         else:
             """
                 Prepare Text Mail
              """
             message = MIMEText(self.message)
+        if isinstance(self.to, list):
+            self.list = ", ".join(self.list)
         message['to'] = self.to
         message['from'] = self.sender
         message['subject'] = self.subject
