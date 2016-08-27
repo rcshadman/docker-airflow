@@ -75,7 +75,6 @@ class GmailAPIOperator(BaseOperator):
         pass
     def execute(self, context):
         def call_methods(cl, methods):
-            pprint.pprint(methods)
             for method in methods:
                 if isinstance(method, tuple):
                     method, kwargs = method
@@ -175,9 +174,9 @@ class GmailAPISendMailOperator(GmailAPIOperator):
         #    (unicode(k).encode('utf-8'), unicode(v).encode('utf-8')) for k, v in self.request if v))
         #logging.info(self.request)
         self.methods = [
-            'users',
-            'messages',
-            ('send',{
+            'users()',
+            'messages()',
+            ('send()',{
                     'userId' : 'me',
                     'body': self.request
                  })
