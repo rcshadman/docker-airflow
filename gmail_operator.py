@@ -162,12 +162,13 @@ class GmailAPISendMailOperator(GmailAPIOperator):
             filename = os.path.basename(file)
             msg.add_header('Content-Disposition', 'attachment', filename=filename)
             message.attach(msg)
+        message = MIMEMultipart()
         if self.html_content:
-            message = MIMEMultipart()
             html_msg = MIMEText(self.html_content, 'html')
             message.attach(html_msg)
         else:
-            message = MIMEText(self.message)
+            plain_msg = MIMEText(self.message, 'plain')
+            message.attach(plain_msg)
         if self.attachment:
             if isinstance(self.attachment, list):
                 for file in self.attachment:
