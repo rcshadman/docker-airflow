@@ -31,12 +31,13 @@ html_template = '''
 </table>
 '''
 
+mail_template = '''Hola como estas <br>'''
 t1 = GmailAPISendMailOperator(
     task_id='Send_Mail',
     to=['felipe.lolas@bci.cl','flolas@bci.cl'],
     sender='felipe.lolas@bci.cl',
     subject='(Airflow) Proceso automatico: Journey Consumo',
-    message=html_template,
+    message=mail_template,
     dag=dag)
 
 t2 = GmailAPISendMailOperator(
@@ -44,17 +45,17 @@ t2 = GmailAPISendMailOperator(
     to='felipe.lolas@bci.cl',
     sender='felipe.lolas@bci.cl',
     subject='(Airflow) Proceso automatico: Journey Consumo Attachment',
-    message=html_template,
+    html_content=html_template,
     attachment='client_secret.json',
     dag=dag)
 
 t3 = GmailAPISendMailOperator(
-    task_id='Send_Mail_Attachment',
+    task_id='Send_Mail_Attachment_multiple',
     to='felipe.lolas@bci.cl',
     sender='felipe.lolas@bci.cl',
     subject='(Airflow) Proceso automatico: Journey Consumo Attachment',
     message=html_template,
-    attachment=['client_secret.json','client_secret.json','client_secret.json'],
+    attachment=['client_secret.json','gmail_dag.py'],
     dag=dag)
 
 t1 >> t2
