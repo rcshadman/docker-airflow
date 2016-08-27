@@ -12,26 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import oauth2client
+import mimetypes
+import logging
+import httplib2
+import base64
+import os
+
 from airflow.utils.decorators import apply_defaults
 from airflow.models import BaseOperator
 from airflow.exceptions import AirflowException
-import logging
-import httplib2
-import pprint
-import json
 from apiclient import discovery
-import oauth2client
 from oauth2client import client
 from oauth2client import tools
-import base64
-import os
 from email.mime.text import MIMEText
 from apiclient import errors
 from email.mime.audio import MIMEAudio
 from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
-import mimetypes
 
 class GmailAPIOperator(BaseOperator):
     """
@@ -40,13 +39,10 @@ class GmailAPIOperator(BaseOperator):
     at ----. Before using any GMail API operators you need
     to get an authentication token at ----
     In the future additional Gmail operators will be derived from this class as well.
-
-    :param
-    :type
     """
     @apply_defaults
     def __init__(self,
-                 credentials_file,
+                 credentials_file = 'credentials.json',
                  api='gmail',
                  api_version="v1",
                  client_secret = 'client_secret.json',
@@ -78,20 +74,10 @@ class GmailAPIOperator(BaseOperator):
             for method in methods:
                 if isinstance(method, tuple):
                     method, kwargs = method
-                    pprint.pprint(method)
-                    pprint.pprint(kwargs)
                     cl = getattr(cl, method)(**kwargs)
-                    pprint.pprint(cl)
                 else:
                     cl = getattr(cl, method)()
-                    pprint.pprint(cl)
             return cl
-        #TODO: Fix this shit
-        """
-        Execute service object
-        :param table: The name of the source table
-        :type table: str
-        """
         self.get_credentials()
         self.service = discovery.build(self.api,
                                        self.api_version,
@@ -101,14 +87,11 @@ class GmailAPIOperator(BaseOperator):
                                        )
         self.prepare_request()
         try:
-            logging.info(self.service)
-            logging.info(self.methods)
             request = call_methods(self.service, self.methods)
             response = request.execute()
             logging.info(response)
         except errors.HttpError, error:
-            logging.error('GMail API call failed: %s', error)
-            raise AirflowException('GMail API call failed: %s', error)
+            raise AirflowException('Gmail API call failed: %s', error)
     def get_credentials(self):
         """Gets valid user credentials from storage.
 
@@ -136,40 +119,64 @@ class GmailAPISendMailOperator(GmailAPIOperator):
     """
     Send mail using GMail API
     More info:
-
-    :param room_id: Room in which to send notification on HipChat
-    :type room_id: str
     """
-    template_fields = ('message', 'to')
-    ui_color = '#2980b9'
+    template_fields = ('to','subject', 'message')
+    template_ext = ('.html',)
+    ui_color = '#e6faf9'
 
     @apply_defaults
-    def __init__(self, to, sender, subject, message, scope ='https://www.googleapis.com/auth/gmail.compose', *args, **kwargs):
+    def __init__(self, to, sender, subject, message, attachment=None, scope='https://www.googleapis.com/auth/gmail.compose', *args, **kwargs):
         super(GmailAPISendMailOperator, self).__init__(*args, **kwargs)
         self.to = to
         self.sender = sender
         self.subject = subject
         self.message = message
         self.scope = scope
-        self.methods = None
+        self.attachment = attachment
 
     def prepare_request(self):
         """Create a message for an email.
-
-         Args:
-           sender: Email address of the sender.
-           to: Email address of the receiver.
-           subject: The subject of the email message.
-           message_text: The text of the email message.
          """
-        message = MIMEText(self.message)
+        if self.attachment:
+            """
+                Attachment upload (Multipart)
+             """
+            message = MIMEMultipart()
+            msg = MIMEText(self.message)
+            message.attach(msg)
+            content_type, encoding = mimetypes.guess_type(self.attachment)
+            if content_type is None or encoding is not None:
+                content_type = 'application/octet-stream'
+            main_type, sub_type = content_type.split('/', 1)
+            if main_type == 'text':
+                fp = open(self.attachment, 'rb')
+                msg = MIMEText(fp.read(), _subtype=sub_type)
+                fp.close()
+            elif main_type == 'image':
+                fp = open(self.attachment, 'rb')
+                msg = MIMEImage(fp.read(), _subtype=sub_type)
+                fp.close()
+            elif main_type == 'audio':
+                fp = open(self.attachment, 'rb')
+                msg = MIMEAudio(fp.read(), _subtype=sub_type)
+                fp.close()
+            else:
+                fp = open(self.attachment, 'rb')
+                msg = MIMEBase(main_type, sub_type)
+                msg.set_payload(fp.read())
+                fp.close()
+            filename = os.path.basename(self.attachment)
+            msg.add_header('Content-Disposition', 'attachment', filename=filename)
+            message.attach(msg)
+        else:
+            """
+                Prepare Text Mail
+             """
+            message = MIMEText(self.message)
         message['to'] = self.to
         message['from'] = self.sender
         message['subject'] = self.subject
         self.request = {'raw': base64.urlsafe_b64encode(message.as_string())}
-        #self.request = json.dumps(dict(
-        #    (unicode(k).encode('utf-8'), unicode(v).encode('utf-8')) for k, v in self.request if v))
-        #logging.info(self.request)
         self.methods = [
             'users',
             'messages',

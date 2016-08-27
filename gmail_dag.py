@@ -17,11 +17,35 @@ default_args = {
 
 dag = DAG('example_gmail_api', default_args=default_args)
 
+html_template = '''
+<table>
+        <tr>
+               <td>Header</td>
+        </tr>
+        <tr>
+               <td>Content</td>
+        </tr>
+        <tr>
+               <td>Footer</td>
+        </tr>
+</table>
+'''
+
 t1 = GmailAPISendMailOperator(
     task_id='Send_Mail',
-    to='felipe.lolas@bci.cl',
+    to=['felipe.lolas@bci.cl','flolas@bci.cl'],
     sender='felipe.lolas@bci.cl',
-    message='prueba',
-    subject='prueba',
-    credentials_file='credentials.json',
+    message='(Airflow) Proceso automatico: Journey Consumo',
+    subject=html_template,
     dag=dag)
+
+t2 = GmailAPISendMailOperator(
+    task_id='Send_Mail',
+    to=['felipe.lolas@bci.cl','flolas@bci.cl'],
+    sender='felipe.lolas@bci.cl',
+    message='(Airflow) Proceso automatico: Journey Consumo Attachment',
+    subject=html_template,
+    attachment='client_secret.json',
+    dag=dag)
+
+t1 >> t2
