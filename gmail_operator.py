@@ -80,7 +80,7 @@ class GmailAPIOperator(BaseOperator):
                     cl = getattr(cl, method)(**kwargs)
                 else:
                     cl = getattr(cl, method)
-        return cl
+            return cl
         #TODO: Fix this shit
         """
         Execute service object
