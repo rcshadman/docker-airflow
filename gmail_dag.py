@@ -58,3 +58,4 @@ t3 = GmailAPISendMailOperator(
     dag=dag)
 
 t1 >> t2
+t2 >> t3
