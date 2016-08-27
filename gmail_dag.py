@@ -23,15 +23,15 @@ html_template = '''
                <td>Header</td>
         </tr>
         <tr>
-               <td>Content</td>
+               <td>hóóóóla</td>
         </tr>
         <tr>
-               <td>Footer</td>
+               <td>ñañañañañaa</td>
         </tr>
 </table>
 '''
 
-mail_template = '''Hola como estas <br>'''
+mail_template = '''Hola como estas ñañañañañañ óé <br>'''
 t1 = GmailAPISendMailOperator(
     task_id='Send_Mail',
     to=['felipe.lolas@bci.cl','felipe.elias013@gmail.com'],
