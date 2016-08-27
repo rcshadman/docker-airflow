@@ -180,7 +180,7 @@ class GmailAPISendMailOperator(GmailAPIOperator):
         else:
             logging.warn("No messsage or html content to send")
         if isinstance(self.to, list):
-            self.list = ", ".join(self.list)
+            self.to = ", ".join(self.to)
         message['to'] = self.to
         message['from'] = self.sender
         message['subject'] = self.subject
