@@ -40,8 +40,8 @@ t1 = GmailAPISendMailOperator(
     dag=dag)
 
 t2 = GmailAPISendMailOperator(
-    task_id='Send_Mail',
-    to=['felipe.lolas@bci.cl','flolas@bci.cl'],
+    task_id='Send_Mail_Attachment',
+    to='felipe.lolas@bci.cl',
     sender='felipe.lolas@bci.cl',
     message='(Airflow) Proceso automatico: Journey Consumo Attachment',
     subject=html_template,
