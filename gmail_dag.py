@@ -30,9 +30,9 @@ html_template = '''
                <td>ñañañañañaa</td>
         </tr>
 </table>
-'''.encode(unicode)
+'''.encode('unicode')
 
-mail_template = '''Hola como estas ñañañañañañ óé <br>'''.encode(unicode)
+mail_template = '''Hola como estas ñañañañañañ óé <br>'''.encode('unicode')
 t1 = GmailAPISendMailOperator(
     task_id='Send_Mail',
     to=['felipe.lolas@bci.cl','felipe.elias013@gmail.com'],
