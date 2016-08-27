@@ -165,20 +165,19 @@ class GmailAPISendMailOperator(GmailAPIOperator):
             filename = os.path.basename(file)
             msg.add_header('Content-Disposition', 'attachment', filename=filename)
             message.attach(msg)
+        message = MIMEMultipart('alternative')
+        msg = MIMEText(self.message, 'plain')
+        message.attach(msg)
+        msg = MIMEText(self.html_content, 'html')
+        message.attach(msg)
         if self.attachment:
-            message = MIMEMultipart()
-            msg = MIMEText(self.message)
-            message.attach(msg)
             if isinstance(self.attachment, list):
                 for file in self.attachment:
                     attach_file(file, message)
             else:
                 attach_file(self.attachment, message)
         else:
-            """
-                Prepare Text Mail
-             """
-            message = MIMEText(self.message)
+            logging.warn("No messsage or html content to send")
         if isinstance(self.to, list):
             self.list = ", ".join(self.list)
         message['to'] = self.to
