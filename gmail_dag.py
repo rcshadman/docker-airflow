@@ -68,7 +68,7 @@ t4 = GmailAPISendMailOperator(
     dag=dag)
 
 t5 = GmailAPISendMailOperator(
-    task_id='Send_Mail_Attachment_txt',
+    task_id='Send_Mail_Attachment_Noattach',
     to='felipe.lolas@bci.cl',
     sender='felipe.lolas@bci.cl',
     subject='(Airflow) Proceso automatico: Journey Consumo Attachment',
