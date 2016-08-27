@@ -125,12 +125,13 @@ class GmailAPISendMailOperator(GmailAPIOperator):
     ui_color = '#e6faf9'
 
     @apply_defaults
-    def __init__(self, to, sender, subject, message, attachment=None, scope='https://www.googleapis.com/auth/gmail.compose', *args, **kwargs):
+    def __init__(self, to, sender, subject, message = None, html_content = None, attachment=None, scope='https://www.googleapis.com/auth/gmail.compose', *args, **kwargs):
         super(GmailAPISendMailOperator, self).__init__(*args, **kwargs)
         self.to = to
         self.sender = sender
         self.subject = subject
         self.message = message
+        self.html_content = html_content
         self.scope = scope
         self.attachment = attachment
 
