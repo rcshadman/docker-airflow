@@ -14,6 +14,7 @@
 """
 ### Example HTTP operator and sensor
 """
+import os
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime, timedelta
@@ -25,15 +26,15 @@ default_args = {
     'depends_on_past': False,
     'start_date': seven_days_ago,
 }
-
-dag = DAG('dyn-task', default_args=default_args)
+path = './dags'
+py = [f for f in os.listdir(path) if f.endswith('.py')]
+dag = DAG('dyn-task233', default_args=default_args)
 Start = DummyOperator(task_id="Start",
                          dag=dag)
 
 End = DummyOperator(task_id="End",
                          dag=dag)
-
-for k in range(1,10):
+for k in py:
     task = DummyOperator(task_id="Loop_Task_" +str(k),
                          dag=dag)
     Start >> task
