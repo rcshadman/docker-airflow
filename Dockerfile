@@ -130,7 +130,7 @@ COPY docker_operator.py /usr/local/lib/python2.7/dist-packages/airflow/operators
 COPY hipchat_operator.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
 COPY views.py /usr/local/lib/python2.7/dist-packages/airflow/www/
 COPY odbc.ini /opt/teradata/client/15.10/odbc_64/
-RUN  apt-get update \
+RUN  apt-get update && \
        apt-get install -y python-lxml
 RUN mkdir ${AIRFLOW_HOME}/files
 
