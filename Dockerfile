@@ -128,6 +128,7 @@ COPY mysql_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
 COPY teradata_hook.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/hooks/
 COPY docker_operator.py /usr/local/lib/python2.7/dist-packages/airflow/operators/
 COPY hipchat_operator.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
+COPY views.py /usr/local/lib/python2.7/dist-packages/airflow/www/
 
 RUN mkdir ${AIRFLOW_HOME}/files
 
