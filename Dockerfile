@@ -76,7 +76,7 @@ RUN pip install -U pip && pip -v install airflow[docker,celery,postgres,hive,mys
         /usr/share/doc-base
 
 # Install teradata python module dependencies
-RUN  apt-get update && apt-get install alien pdksh dpkg-dev debhelper && pip install teradata
+RUN  apt-get update && apt-get install -y alien pdksh dpkg-dev debhelper && pip install teradata
 RUN mkdir /opt/teradata_odbc
 COPY teradata_odbc/TeraGSS_linux_x64-15.10.01.01-1.noarch.rpm /opt/teradata_odbc
 COPY teradata_odbc/tdicu1510-15.10.01.00-1.noarch.rpm /opt/teradata_odbc
