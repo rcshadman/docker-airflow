@@ -179,6 +179,8 @@ class DockerOperator(BaseOperator):
             exit_code = self.cli.wait(self.container['Id'])
 
             if exit_code != 0:
+                if self.container['Id']:
+                    self.cli.remove_container(self.container['Id'])
                 raise AirflowException('docker container failed')
 
             if self.xcom_push:
