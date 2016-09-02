@@ -28,7 +28,7 @@ class TeradataHook(DbApiHook):
     """
     conn_name_attr = 'teradata_conn_id'
     default_conn_name = 'teradata_default'
-    supports_autocommit = False
+    supports_autocommit = True
 
     def get_conn(self):
         """
@@ -56,7 +56,9 @@ class TeradataHook(DbApiHook):
                                   system=conn.host,
                                   username=conn.login,
                                   password=conn.password,
-                                  charset='UTF8');
+                                  charset='UTF8',
+                                  #autoCommit='False'
+                                  );
         return session
     def insert_rows(self, table, rows, commit_every=1000):
         """
@@ -75,7 +77,7 @@ class TeradataHook(DbApiHook):
                 """
         conn = self.get_conn()
         cur = conn.cursor()
-        conn.commit()
+        #conn.commit()
         i = 0
         for row in rows:
             i += 1
@@ -91,7 +93,7 @@ class TeradataHook(DbApiHook):
                 conn.commit()
                 logging.info(
                     "Loaded {i} into {table} rows so far".format(**locals()))
-        conn.commit()
+        #conn.commit()
         cur.close()
         conn.close()
         logging.info(
@@ -117,14 +119,14 @@ class TeradataHook(DbApiHook):
             row_count += 1
             if row_count % commit_every == 0:
                 cursor.executemany(prepared_stm, row_chunk, batch=True)
-                conn.commit()
+                #conn.commit()
                 logging.info('[%s] inserted %s rows', table, row_count)
                 # Empty chunk
                 row_chunk = []
         # Commit the leftover chunk
         if len(row_chunk) > 0:
             cursor.executemany(prepared_stm, row_chunk, batch=True)
-            conn.commit()
+            ##conn.commit()
             logging.info('[%s] inserted %s rows', table, row_count)
             logging.info("Inserted " + str(len(rows)) + " rows in " + str(round(time.time() - start_time, 2)) + " second(s)")
         cursor.close()
