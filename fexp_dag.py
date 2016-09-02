@@ -27,7 +27,7 @@ default_args = {
 }
 
 dag = DAG('docker-fexp', default_args=default_args)
-select_query = "SELECT * FROM financial.transs"
+select_query = "SELECT * FROM financial.trans"
 t1 = DockerOperator(
          docker_url='192.168.1.63:2375',
          image='bci/teradata-tdexp:15.10',

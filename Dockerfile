@@ -75,6 +75,28 @@ RUN pip install -U pip && pip -v install airflow[docker,celery,postgres,hive,mys
         /usr/share/doc \
         /usr/share/doc-base
 
+COPY teradata/ /opt/teradata/
+
+RUN apt-get update && apt-get install glibc.i686 libstdc++.i686 ksh alien dpkg-dev debhelper build-essential
+
+RUN alien -i /opt/teradata15/tdicu1510-15.10.01.02-1.noarch.rpm --scripts
+RUN alien -i /opt/teradata15/TeraGSS_linux_x64-15.10.02.08-1.noarch.rpm --scripts
+RUN alien -i /opt/teradata15/tdodbc1510-15.10.01.03-1.noarch.rpm --scripts
+
+# Teradata Configuration
+ARG TD_VERSION=15.10
+ARG TD_CLIENT_PATH=/opt/teradata/client
+
+# ODBC TDICU
+ENV ODBCINST $TD_CLIENT_PATH/$TD_VERSION/odbc_64/odbcinst.ini
+ENV ODBCINI  $TD_CLIENT_PATH/$TD_VERSION/odbc_64/odbc.ini
+ENV TD_ICU_DATA $TD_CLIENT_PATH/$TD_VERSION/tdicu/lib64
+ENV MANPATH $TD_CLIENT_PATH/$TD_VERSION/odbc_64/help/man:$MANPATH
+ENV NLSPATH $TD_CLIENT_PATH/$TD_VERSION/odbc_64/msg/%N:$NLSPATH
+ENV COPLIB $TD_CLIENT_PATH/$TD_VERSION/lib64
+ENV COPERR $TD_CLIENT_PATH/$TD_VERSION/lib64
+ENV LD_LIBRARY_PATH $TD_CLIENT_PATH/$TD_VERSION/lib64:/usr/lib64
+
 COPY script/entrypoint.sh ${AIRFLOW_HOME}/entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 COPY mysql_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/ 
