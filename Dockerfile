@@ -77,7 +77,7 @@ RUN pip install -U pip && pip -v install airflow[docker,celery,postgres,hive,mys
 
 COPY teradata/ /opt/teradata/
 
-RUN apt-get update && apt-get install ksh alien dpkg-dev debhelper build-essential && pip install -U pip && pip install teradata
+RUN apt-get update && apt-get install -yqq ksh alien dpkg-dev debhelper build-essential && pip install -U pip && pip install teradata
 RUN alien -i /opt/teradata15/tdicu1510-15.10.01.02-1.noarch.rpm --scripts
 RUN alien -i /opt/teradata15/TeraGSS_linux_x64-15.10.02.08-1.noarch.rpm --scripts
 RUN alien -i /opt/teradata15/tdodbc1510-15.10.01.03-1.noarch.rpm --scripts
