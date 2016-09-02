@@ -58,3 +58,4 @@ class TeradataHook(DbApiHook):
                                   password=conn.password,
                                   charset='UTF8');
         return session
+

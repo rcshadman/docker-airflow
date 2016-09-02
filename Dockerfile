@@ -108,6 +108,7 @@ ln -sfn /opt/teradata/client/15.10/lib64/odbccurs.so /usr/lib/odbccurs.so;\
 ln -sfn /opt/teradata/client/15.10/lib64/vscnctdlg.so /usr/lib/vscnctdlg.so;\
 ln -sfn /opt/teradata/client/15.10/lib64/libddicu27.so /usr/lib/libddicu27.so
 
+RUN apt-get install -y python-lxml
 # Teradata Configuration
 ARG TD_VERSION=15.10
 ARG TD_CLIENT_PATH=/opt/teradata/client
