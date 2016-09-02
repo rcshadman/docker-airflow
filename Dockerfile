@@ -80,7 +80,7 @@ COPY teradata/ /opt/teradata/
 RUN apt-get update && apt-get install -yqq ksh alien dpkg-dev debhelper build-essential && pip install -U pip && pip install teradata
 RUN alien -i /opt/teradata/tdicu1510-15.10.01.02-1.noarch.rpm --scripts
 RUN alien -i /opt/teradata/TeraGSS_linux_x64-15.10.02.08-1.noarch.rpm --scripts
-RUN alien -i /opt/teradata/tdodbc1510-15.10.01.03-1.noarch.rpm --scripts
+RUN alien -i /opt/teradata/tdodbc1510-15.10.01.03-1.noarch.rpm
 
 # Teradata Configuration
 ARG TD_VERSION=15.10
