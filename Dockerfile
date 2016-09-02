@@ -77,8 +77,7 @@ RUN pip install -U pip && pip -v install airflow[docker,celery,postgres,hive,mys
 
 COPY teradata/ /opt/teradata/
 
-RUN apt-get update && apt-get install glibc.i686 libstdc++.i686 ksh alien dpkg-dev debhelper build-essential
-
+RUN apt-get update && apt-get install ksh alien dpkg-dev debhelper build-essential && pip install -U pip && pip install teradata
 RUN alien -i /opt/teradata15/tdicu1510-15.10.01.02-1.noarch.rpm --scripts
 RUN alien -i /opt/teradata15/TeraGSS_linux_x64-15.10.02.08-1.noarch.rpm --scripts
 RUN alien -i /opt/teradata15/tdodbc1510-15.10.01.03-1.noarch.rpm --scripts
@@ -99,7 +98,8 @@ ENV LD_LIBRARY_PATH $TD_CLIENT_PATH/$TD_VERSION/lib64:/usr/lib64
 
 COPY script/entrypoint.sh ${AIRFLOW_HOME}/entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
-COPY mysql_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/ 
+COPY mysql_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
+COPY teradata_hook.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/hooks/
 COPY docker_operator.py /usr/local/lib/python2.7/dist-packages/airflow/operators/
 COPY hipchat_operator.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
 
