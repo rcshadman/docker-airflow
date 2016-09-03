@@ -213,7 +213,7 @@ class DbApiHook(BaseHook):
     @staticmethod
     def _serialize_cell(cell):
         if isinstance(cell, basestring):
-            return  "'%s'" %  str(cell)
+            return  "'%s'" %  cell
         elif cell is None:
             return 'NULL'
         elif isinstance(cell, numpy.datetime64):
