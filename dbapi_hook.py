@@ -193,7 +193,6 @@ class DbApiHook(BaseHook):
             values = tuple(l)
             logging.info(values)
             print(values[5])
-            print(unicode(values[5]))
             sql = "INSERT INTO {0} {1} VALUES ({2});".format(
                 table,
                 target_fields,
@@ -212,8 +211,7 @@ class DbApiHook(BaseHook):
     @staticmethod
     def _serialize_cell(cell):
         if isinstance(cell, basestring):
-            logging.info(cell)
-            return cell
+            return cell.decode('latin1')
         elif cell is None:
             return 'NULL'
         elif isinstance(cell, numpy.datetime64):
