@@ -211,7 +211,7 @@ class DbApiHook(BaseHook):
     def _serialize_cell(cell):
         if isinstance(cell, basestring):
             logging.info(cell)
-            return cell.decode('latin1').encode('utf-8', errors='ignore')
+            return cell
         elif cell is None:
             return 'NULL'
         elif isinstance(cell, numpy.datetime64):
