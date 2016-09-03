@@ -17,9 +17,10 @@ import logging
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.hooks.base_hook import BaseHook
+from airflow.contrib.hooks.teradata_hook import TeradataHook
 
 
-class GenericBtransfer(BaseOperator):
+class TransferToTeradataOperator(BaseOperator):
     """
     Moves data from a connection to another, assuming that they both
     provide the required methods in their respective hooks. The source hook
@@ -54,7 +55,7 @@ class GenericBtransfer(BaseOperator):
             destination_conn_id,
             preoperator=None,
             *args, **kwargs):
-        super(GenericBtransfer, self).__init__(*args, **kwargs)
+        super(TransferToTeradataOperator, self).__init__(*args, **kwargs)
         self.sql = sql
         self.destination_table = destination_table
         self.source_conn_id = source_conn_id
@@ -68,7 +69,7 @@ class GenericBtransfer(BaseOperator):
         logging.info("Executing: \n" + self.sql)
         results = source_hook.get_records(self.sql)
 
-        destination_hook = BaseHook.get_hook(self.destination_conn_id)
+        destination_hook = TeradataHook(teradata_conn_id=self.destination_conn_id)
         if self.preoperator:
             logging.info("Running preoperator")
             logging.info(self.preoperator)
