@@ -157,6 +157,7 @@ class TeradataHook(DbApiHook):
         conn.close()
 
     def serialize_cell(self, cell):
+        logging.info(type(cell))
         if isinstance(cell, basestring):
             #TODO: Fix this
             return cell.decode('latin1') #This assumes that input is in latin1
