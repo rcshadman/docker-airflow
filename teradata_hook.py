@@ -50,8 +50,8 @@ class TeradataHook(DbApiHook):
 
         conn = teradata.UdaExec(appName=appn,
                                 version=ver,
-                                logConsole=False,
-                                configureLogging=False,
+                                logConsole=log,
+                                configureLogging=log,
                                 checkpointFile=False).\
                         connect(method="odbc",
                                   externalDSN=externalDsn,
@@ -85,7 +85,7 @@ class TeradataHook(DbApiHook):
         conn.close()
         return rows
 
-    def insert_rows(self, table, rows, commit_every=1000):
+    def insert_rows(self, table, rows, commit_every=1000, unicode_source=True):
         """
                 A generic way to insert a set of tuples into a table,
                 the whole set of inserts is treated as one transaction
@@ -100,6 +100,8 @@ class TeradataHook(DbApiHook):
                     transaction. Set to 0 to insert all rows in one transaction.
                 :type commit_every: int
                 """
+        # Workaround when source is unicode
+        self.unicode_source = unicode_source
         conn = self.get_conn()
         cur = conn.cursor()
         i = 0
@@ -123,12 +125,12 @@ class TeradataHook(DbApiHook):
         logging.info(
             "Done loading. Loaded a total of {i} rows".format(**locals()))
 
-    def bulk_insert_rows(self, table, rows, commit_every=5000):
-        import time
-        start_time = time.time()
+    def bulk_insert_rows(self, table, rows, commit_every=5000, unicode_source=True):
         """A performant bulk insert for Teradata that uses prepared statements via `executemany()`.
         For best performance, pass in `rows` as an iterator.
         """
+        #Workaround when source is unicode
+        self.unicode_source = unicode_source
         conn = self.get_conn()
         cursor = conn.cursor()
         values = ",".join(['?' for row in range(0, len(rows[0]))])
@@ -144,23 +146,24 @@ class TeradataHook(DbApiHook):
             if row_count % commit_every == 0:
                 cursor.executemany(prepared_stm, row_chunk, batch=True)
                 logging.info(type(row_chunk[5]))
-                #conn.commit()
-                logging.info('[%s] inserted %s rows', table, row_count)
+                logging.info('Loaded %s into %s rows so far', row_count, table)
                 # Empty chunk
                 row_chunk = []
         # Commit the leftover chunk
         if len(row_chunk) > 0:
             cursor.executemany(prepared_stm, row_chunk, batch=True)
             logging.info('[%s] inserted %s rows', table, row_count)
-        logging.info("Done loading. Loaded a total of " + str(len(rows)) + " rows in " + str(round(time.time() - start_time, 2)) + " second(s)")
+        logging.info("Done loading. Loaded a total of " + str(len(rows)) + " rows")
         cursor.close()
         conn.close()
 
     def serialize_cell(self, cell):
-        logging.info(type(cell))
-        if isinstance(cell, str):
+        if isinstance(cell, basestring):
             #TODO: Fix this
-            return cell.decode('latin1') #This assumes that input is in latin1
+            if self.unicode_source:
+                return cell
+            else:
+                return cell.decode('latin1') #This assumes that input is in latin1
         elif cell is None:
             return None
         elif isinstance(cell, numpy.datetime64):
