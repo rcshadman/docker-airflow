@@ -192,6 +192,8 @@ class DbApiHook(BaseHook):
                 l.append(self._serialize_cell(cell))
             values = tuple(l)
             logging.info(values)
+            print(values[5])
+            print(unicode(values[5]))
             sql = "INSERT INTO {0} {1} VALUES ({2});".format(
                 table,
                 target_fields,
