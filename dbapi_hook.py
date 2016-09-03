@@ -194,10 +194,7 @@ class DbApiHook(BaseHook):
             logging.info(values)
             vv = ",".join(values)
             print(values[5])
-            sql = "INSERT INTO {0} {1} VALUES ({2});".format(
-                table,
-                target_fields,
-                ",".join(values))
+            sql = '''INSERT INTO ''' + table + ''' VALUES  (''' + vv  + ''')'''
             cur.execute(sql)
             if commit_every and i % commit_every == 0:
                 conn.commit()
