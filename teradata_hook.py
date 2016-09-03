@@ -136,15 +136,15 @@ class TeradataHook(DbApiHook):
         cursor = conn.cursor()
         logging.info("Starting batch insert...")
         values = ",".join(['?' for row in range(0, len(rows[0]))])
-        logging.info(values)
         prepared_stm = """INSERT INTO {0} VALUES ({1})""".format(
             table,
             values)
+        logging.info(prepared_stm)
         row_count = 0
         # Chunk the rows
         row_chunk = []
         for row in rows:
-            row_chunk.append(self._serialize_cell(row))
+            row_chunk.append(row)
             row_count += 1
             if row_count % commit_every == 0:
                 cursor.executemany(prepared_stm, row_chunk, batch=True)
