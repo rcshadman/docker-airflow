@@ -159,9 +159,9 @@ class TeradataHook(DbApiHook):
     def serialize_cell(self, cell):
         if isinstance(cell, str):
             #TODO: Fix this
-            return cell.decode('latin1') #This assumes that input is in latin1 (workaround for working with latin1 hook)
+            return cell #This assumes that input is in latin1 (workaround for working with latin1 hook)
         elif isinstance(cell, unicode):
-            return cell
+            return cell.decode('latin1')
         elif cell is None:
             return None
         elif isinstance(cell, numpy.datetime64):
