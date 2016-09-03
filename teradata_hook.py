@@ -163,8 +163,8 @@ class TeradataHook(DbApiHook):
             elif cell is None:
                 return 'NULL'
             elif isinstance(cell, numpy.datetime64):
-                return "'" + str(cell) + "'"
+                return str(cell)
             elif isinstance(cell, datetime):
-                return "'" + cell.isoformat() + "'"
+                return cell.isoformat()
             else:
                 return str(cell)
