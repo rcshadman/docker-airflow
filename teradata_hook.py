@@ -159,7 +159,7 @@ class TeradataHook(DbApiHook):
     def serialize_cell(self, cell):
         logging.info(type(cell))
         if isinstance(cell, basestring):
-            return cell.encode('utf-8')
+            return cell.decode('latin1')
         elif cell is None:
             return 'NULL'
         elif isinstance(cell, numpy.datetime64):
