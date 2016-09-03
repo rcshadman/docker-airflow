@@ -130,7 +130,7 @@ class TeradataHook(DbApiHook):
         """A performant bulk insert for Teradata that uses prepared statements via `executemany()`.
         For best performance, pass in `rows` as an iterator.
         """
-        conn = self.conn()
+        conn = self.get_conn()
         cursor = conn.cursor()
         values = ",".join(['?' for row in range(0, len(rows[0]))])
         prepared_stm = """INSERT INTO {0} VALUES ({1})""".format(
