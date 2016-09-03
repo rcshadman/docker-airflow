@@ -101,7 +101,7 @@ class TeradataHook(DbApiHook):
                 """
         conn = self.get_conn()
         cur = conn.cursor()
-        logging.info(rows)
+        print(str(rows))
         #conn.commit()
         i = 0
         for row in rows:
