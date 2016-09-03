@@ -112,7 +112,7 @@ class TeradataHook(DbApiHook):
             sql = "INSERT INTO {0} VALUES ({1});".format(
                 table,
                 values)
-            cur.execute(sql)
+            cur.execute(sql, l)
             if commit_every and i % commit_every == 0:
                 conn.commit()
                 logging.info(
