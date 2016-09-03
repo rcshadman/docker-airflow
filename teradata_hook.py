@@ -43,24 +43,48 @@ class TeradataHook(DbApiHook):
         as in ``{ "dsn":"some.host.address" , "service_name":"some.service.name" }``
         """
         conn = self.get_connection(self.teradata_conn_id)
-        dsn = conn.extra_dejson.get('dsn', None)
+        externalDsn = conn.extra_dejson.get('externalDsn', None)
         appn = conn.extra_dejson.get('appName', 'airflow')
         ver = conn.extra_dejson.get('version', '1.0')
-        log = conn.extra_dejson.get('logConsole', False)
+        log = conn.extra_dejson.get('logging', False)
 
         udaExec = teradata.UdaExec(appName=appn,
                                    version=ver,
-                                   logConsole=log )
+                                   logConsole=log,
+                                   configureLogging=log
+                                   )
 
         conn = udaExec.connect(method="odbc",
-                                  externalDSN=dsn,
+                                  externalDSN=externalDsn,
                                   system=conn.host,
                                   username=conn.login,
                                   password=conn.password,
                                   charset='UTF8',
-                                  #autoCommit='False'
                                   );
         return conn
+
+    def get_records(self, sql, parameters=None):
+        """
+        Executes the sql and returns a set of records.
+
+        :param sql: the sql statement to be executed (str) or a list of
+            sql statements to execute
+        :type sql: str or list
+        :param parameters: The parameters to render the SQL query with.
+        :type parameters: mapping or iterable
+        """
+        if sys.version_info[0] < 3:
+            sql = sql.encode('utf-8')
+        conn = self.get_conn()
+        cur = conn.cursor()
+        if parameters is not None:
+            cur.execute(sql, parameters)
+        else:
+            cur.execute(sql)
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        return rows
 
     def insert_rows(self, table, rows, commit_every=1000):
         """
@@ -133,26 +157,3 @@ class TeradataHook(DbApiHook):
             logging.info("Inserted " + str(len(rows)) + " rows in " + str(round(time.time() - start_time, 2)) + " second(s)")
         cursor.close()
         conn.close()
-
-    def get_records(self, sql, parameters=None):
-        """
-        Executes the sql and returns a set of records.
-
-        :param sql: the sql statement to be executed (str) or a list of
-            sql statements to execute
-        :type sql: str or list
-        :param parameters: The parameters to render the SQL query with.
-        :type parameters: mapping or iterable
-        """
-        if sys.version_info[0] < 3:
-            sql = sql.encode('utf-8')
-        conn = self.get_conn()
-        cur = conn.cursor()
-        if parameters is not None:
-            cur.execute(sql, parameters)
-        else:
-            cur.execute(sql)
-        rows = cur.fetchall()
-        cur.close()
-        conn.close()
-        return rows

@@ -32,22 +32,16 @@ class TeradataOperator(BaseOperator):
 
     template_fields = ('sql',)
     template_ext = ('.sql',)
-    ui_color = '#ededed'
+    ui_color = '#f6c79a'
 
     @apply_defaults
     def __init__(
-            self, sql, teradata_conn_id='teradata_default', parameters=None,
-            autocommit=False, *args, **kwargs):
+            self, sql, teradata_conn_id='teradata_default', *args, **kwargs):
         super(TeradataOperator, self).__init__(*args, **kwargs)
         self.teradata_conn_id = teradata_conn_id
         self.sql = sql
-        self.autocommit = autocommit
-        self.parameters = parameters
 
     def execute(self, context):
         logging.info('Executing: ' + str(self.sql))
         hook = TeradataHook(teradata_conn_id=self.teradata_conn_id)
-        hook.run(
-            self.sql,
-            autocommit=self.autocommit,
-            parameters=self.parameters)
+        hook.run(self.sql)
