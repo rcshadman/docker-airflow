@@ -208,15 +208,14 @@ class DbApiHook(BaseHook):
             "Done loading. Loaded a total of {i} rows".format(**locals()))
 
     @staticmethod
-    def ensure_unicode(v):
-        if isinstance(v, str):
-            v = v.decode('utf8')
-        return unicode(v)
-    @staticmethod
     def _serialize_cell(cell):
+        def ensure_unicode(v):
+            if isinstance(v, str):
+                v = v.decode('utf8')
+            return unicode(v)
         if isinstance(cell, basestring):
 
-            return  self.ensure_unicode("'%s'" %  cell)
+            return ensure_unicode("'%s'" %  cell)
         elif cell is None:
             return 'NULL'
         elif isinstance(cell, numpy.datetime64):
