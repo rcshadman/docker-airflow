@@ -210,7 +210,7 @@ class DbApiHook(BaseHook):
     @staticmethod
     def _serialize_cell(cell):
         if isinstance(cell, basestring):
-            return cell.decode('latin1')
+            return "'" + cell.decode('latin1') + "'"
         elif cell is None:
             return 'NULL'
         elif isinstance(cell, numpy.datetime64):
