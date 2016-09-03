@@ -134,8 +134,9 @@ class TeradataHook(DbApiHook):
         """
         conn = self.get_conn()
         cursor = conn.cursor()
+        logging.info("Starting batch insert...")
         values = ",".join(['?' for row in range(0, len(rows[0]))])
-        print(values)
+        logging.info(values)
         prepared_stm = """INSERT INTO {0} VALUES ({1})""".format(
             table,
             values)
