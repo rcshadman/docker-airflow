@@ -50,8 +50,9 @@ class TeradataHook(DbApiHook):
 
         conn = teradata.UdaExec(appName=appn,
                                 version=ver,
-                                logConsole=log,
-                                configureLogging=log).\
+                                logConsole=False,
+                                configureLogging=False,
+                                checkpointFile=False).\
                         connect(method="odbc",
                                   externalDSN=externalDsn,
                                   system=conn.host,
