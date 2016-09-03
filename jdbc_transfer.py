@@ -62,14 +62,14 @@ class JdbcTransfer(BaseOperator):
         self.preoperator = preoperator
 
     def execute(self, context):
-        source_hook = JdbcHook(jdbc_conn_id=self.source_conn_id)
+        source_hook = JdbcHook(jdbc_conn_id=self.source_conn_id, autocommit=False)
 
         logging.info("Extracting data from {}".format(self.source_conn_id))
         logging.info("Executing: \n" + self.sql)
         results = source_hook.get_records(self.sql)
         source_hook = []
 
-        destination_hook = JdbcHook(jdbc_conn_id=self.source_conn_id)
+        destination_hook = JdbcHook(jdbc_conn_id=self.source_conn_id, autocommit=False)
         if self.preoperator:
             logging.info("Running preoperator")
             logging.info(self.preoperator)
