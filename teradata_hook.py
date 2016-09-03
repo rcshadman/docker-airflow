@@ -16,6 +16,7 @@ import teradata
 
 from airflow.hooks.dbapi_hook import DbApiHook
 from builtins import str
+import sys
 from past.builtins import basestring
 from datetime import datetime
 import numpy
