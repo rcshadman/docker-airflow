@@ -107,7 +107,7 @@ class TeradataHook(DbApiHook):
             i += 1
             l = []
             for cell in row:
-                l.append(cell)
+                l.append(self._serialize_cell(cell))
             values = values = ",".join(['?' for cell in range(0, len(row))])
             sql = "INSERT INTO {0} VALUES ({1});".format(
                 table,
@@ -132,7 +132,7 @@ class TeradataHook(DbApiHook):
         conn = self.get_conn()
         cursor = conn.cursor()
         values = ",".join(['?' for row in range(0, len(rows[0]))])
-        prepared_stm = b"""INSERT INTO {0} VALUES ({1})""".format(
+        prepared_stm = """INSERT INTO {0} VALUES ({1})""".format(
             table,
             values)
         row_count = 0
@@ -155,3 +155,9 @@ class TeradataHook(DbApiHook):
         logging.info("Done loading. Loaded a total of " + str(len(rows)) + " rows in " + str(round(time.time() - start_time, 2)) + " second(s)")
         cursor.close()
         conn.close()
+
+        def _serialize_cell(cell):
+            if isinstance(cell, basestring):
+                return cell.encode('utf-8')
+            else:
+                return cell
