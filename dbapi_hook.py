@@ -175,7 +175,7 @@ class DbApiHook(BaseHook):
         :type commit_every: int
         """
 	stats_list = [u'Statistik över sånger\n', u'Antal\tSång']
-
+        supports_autocommit = False
 	'\n'.join(stats_list)
         if target_fields:
             target_fields = ", ".join(target_fields)
