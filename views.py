@@ -2146,6 +2146,7 @@ class ConnectionModelView(wwwutils.SuperUserMixin, AirflowModelView):
             ('ssh', 'SSH',),
             ('mssql', 'Microsoft SQL Server'),
             ('mesos_framework-id', 'Mesos Framework ID'),
+            ('teradata', 'Teradata'),
         ]
     }
 
