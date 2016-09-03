@@ -135,10 +135,10 @@ class TeradataHook(DbApiHook):
         conn = self.get_conn()
         cursor = conn.cursor()
         values = ",".join(['?' for row in range(0, len(rows[0]))])
+        print(values)
         prepared_stm = """INSERT INTO {0} VALUES ({1})""".format(
             table,
             values)
-        print(prepared_stm)
         row_count = 0
         # Chunk the rows
         row_chunk = []
