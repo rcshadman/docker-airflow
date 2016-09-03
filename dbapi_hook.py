@@ -185,8 +185,8 @@ class DbApiHook(BaseHook):
         conn = self.get_conn()
         cur = conn.cursor()
         if self.supports_autocommit:
-            cur.execute('SET autocommit = 0')
-        conn.commit()
+            #cur.execute('SET autocommit = 0')
+        #conn.commit()
         i = 0
         for row in rows:
             i += 1
@@ -201,10 +201,10 @@ class DbApiHook(BaseHook):
                 ",".encode('latin1').join(values))
             cur.execute(sql)
             if commit_every and i % commit_every == 0:
-                conn.commit()
+                #conn.commit()
                 logging.info(
                     "Loaded {i} into {table} rows so far".format(**locals()))
-        conn.commit()
+                #conn.commit()
         cur.close()
         conn.close()
         logging.info(
