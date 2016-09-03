@@ -48,13 +48,11 @@ class TeradataHook(DbApiHook):
         ver = conn.extra_dejson.get('version', '1.0')
         log = conn.extra_dejson.get('logging', False)
 
-        udaExec = teradata.UdaExec(appName=appn,
-                                   version=ver,
-                                   logConsole=log,
-                                   configureLogging=log
-                                   )
-
-        conn = udaExec.connect(method="odbc",
+        conn = teradata.UdaExec(appName=appn,
+                                version=ver,
+                                logConsole=log,
+                                configureLogging=log).\
+                        connect(method="odbc",
                                   externalDSN=externalDsn,
                                   system=conn.host,
                                   username=conn.login,

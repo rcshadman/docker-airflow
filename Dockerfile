@@ -134,7 +134,6 @@ COPY dbapi_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
 #COPY connection_form.js /usr/local/lib/python2.7/dist-packages/airflow/www/static/
 COPY __init__.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/hooks/
 COPY odbc.ini /opt/teradata/client/15.10/odbc_64/
-RUN apt-get -y install vim nano
 
 RUN mkdir ${AIRFLOW_HOME}/files
 
