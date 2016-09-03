@@ -52,7 +52,7 @@ class TeradataHook(DbApiHook):
                                    version=ver,
                                    logConsole=log )
 
-        session = udaExec.connect(method="odbc",
+        conn = udaExec.connect(method="odbc",
                                   externalDSN=dsn,
                                   system=conn.host,
                                   username=conn.login,
@@ -60,7 +60,7 @@ class TeradataHook(DbApiHook):
                                   charset='UTF8',
                                   #autoCommit='False'
                                   );
-        return session
+        return conn
 
     def insert_rows(self, table, rows, commit_every=1000):
         """
@@ -147,10 +147,12 @@ class TeradataHook(DbApiHook):
         if sys.version_info[0] < 3:
             sql = sql.encode('utf-8')
         conn = self.get_conn()
+        cur = conn.cursor()
         if parameters is not None:
-            conn.execute(sql, parameters)
+            cur.execute(sql, parameters)
         else:
-            conn.execute(sql)
-        rows = conn.fetchall()
+            cur.execute(sql)
+        rows = cur.fetchall()
+        cur.close()
         conn.close()
         return rows
