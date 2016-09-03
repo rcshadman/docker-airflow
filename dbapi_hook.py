@@ -211,11 +211,10 @@ class DbApiHook(BaseHook):
     def _serialize_cell(cell):
         def ensure_unicode(v):
             if isinstance(v, str):
-                v = v.decode('utf8')
+                v = v.decode('latin1')
             return unicode(v)
         if isinstance(cell, basestring):
-
-            return ensure_unicode("'%s'" %  cell)
+            return ensure_unicode(cell)
         elif cell is None:
             return 'NULL'
         elif isinstance(cell, numpy.datetime64):
