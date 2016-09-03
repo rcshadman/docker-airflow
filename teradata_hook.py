@@ -60,6 +60,7 @@ class TeradataHook(DbApiHook):
                                   #autoCommit='False'
                                   );
         return session
+
     def insert_rows(self, table, rows, commit_every=1000):
         """
                 A generic way to insert a set of tuples into a table,
@@ -131,3 +132,24 @@ class TeradataHook(DbApiHook):
             logging.info("Inserted " + str(len(rows)) + " rows in " + str(round(time.time() - start_time, 2)) + " second(s)")
         cursor.close()
         conn.close()
+
+    def get_records(self, sql, parameters=None):
+        """
+        Executes the sql and returns a set of records.
+
+        :param sql: the sql statement to be executed (str) or a list of
+            sql statements to execute
+        :type sql: str or list
+        :param parameters: The parameters to render the SQL query with.
+        :type parameters: mapping or iterable
+        """
+        if sys.version_info[0] < 3:
+            sql = sql.encode('utf-8')
+        conn = self.get_conn()
+        if parameters is not None:
+            conn.execute(sql, parameters)
+        else:
+            conn.execute(sql)
+        rows = conn.fetchall()
+        conn.close()
+        return rows

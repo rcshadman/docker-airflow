@@ -21,9 +21,9 @@ from airflow.utils.decorators import apply_defaults
 
 class TeradataOperator(BaseOperator):
     """
-    Executes sql code in a specific Oracle database
-    :param oracle_conn_id: reference to a specific Oracle database
-    :type oracle_conn_id: string
+    Executes sql code in a specific teradata database
+    :param teradata_conn_id: reference to a specific teradata database
+    :type teradata_conn_id: string
     :param sql: the sql code to be executed
     :type sql: Can receive a str representing a sql statement,
         a list of str (sql statements), or reference to a template file.
@@ -36,17 +36,17 @@ class TeradataOperator(BaseOperator):
 
     @apply_defaults
     def __init__(
-            self, sql, oracle_conn_id='teradata_default', parameters=None,
+            self, sql, teradata_conn_id='teradata_default', parameters=None,
             autocommit=False, *args, **kwargs):
         super(TeradataOperator, self).__init__(*args, **kwargs)
-        self.oracle_conn_id = oracle_conn_id
+        self.teradata_conn_id = teradata_conn_id
         self.sql = sql
         self.autocommit = autocommit
         self.parameters = parameters
 
     def execute(self, context):
         logging.info('Executing: ' + str(self.sql))
-        hook = TeradataHook(oracle_conn_id=self.oracle_conn_id)
+        hook = TeradataHook(teradata_conn_id=self.teradata_conn_id)
         hook.run(
             self.sql,
             autocommit=self.autocommit,
