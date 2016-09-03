@@ -107,7 +107,7 @@ class TeradataHook(DbApiHook):
             i += 1
             l = []
             for cell in row:
-                l.append(self._serialize_cell(cell))
+                l.append(self.serialize(cell))
             values = values = ",".join(['?' for cell in range(0, len(row))])
             sql = "INSERT INTO {0} VALUES ({1});".format(
                 table,
@@ -156,7 +156,7 @@ class TeradataHook(DbApiHook):
         cursor.close()
         conn.close()
 
-        def _serialize_cell(cell):
+        def serialize(self, cell):
             logging.info(cell)
             logging.info(type(cell))
             if isinstance(cell, basestring):
