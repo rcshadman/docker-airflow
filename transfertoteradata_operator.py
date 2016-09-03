@@ -79,9 +79,8 @@ class TransferToTeradataOperator(BaseOperator):
             logging.info(self.preoperator)
             destination_hook.run(self.preoperator)
 
-        logging.info(results)
         if self.batch:
-            logging.info("Inserting rows into {} with batches of {}".format(self.destination_conn_id), str(self.batch_size))
+            logging.info("Inserting rows into {} with batches".format(self.destination_conn_id))
             destination_hook.bulk_insert_rows(table=self.destination_table, rows=results, commit_every=self.batch_size)
         else:
             logging.info("Inserting rows into {}".format(self.destination_conn_id))
