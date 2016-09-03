@@ -174,6 +174,9 @@ class DbApiHook(BaseHook):
             transaction. Set to 0 to insert all rows in one transaction.
         :type commit_every: int
         """
+	stats_list = [u'Statistik över sånger\n', u'Antal\tSång']
+
+	'\n'.join(stats_list)
         if target_fields:
             target_fields = ", ".join(target_fields)
             target_fields = "({})".format(target_fields)
@@ -191,10 +194,11 @@ class DbApiHook(BaseHook):
             for cell in row:
                 l.append(self._serialize_cell(cell))
             values = tuple(l)
+	    logging.info(values)
             sql = "INSERT INTO {0} {1} VALUES ({2});".format(
                 table,
                 target_fields,
-                ",".join(values))
+                ",".encode('latin1').join(values))
             cur.execute(sql)
             if commit_every and i % commit_every == 0:
                 conn.commit()
@@ -209,7 +213,7 @@ class DbApiHook(BaseHook):
     @staticmethod
     def _serialize_cell(cell):
         if isinstance(cell, basestring):
-            return "'" + str(cell).replace("'", "''") + "'"
+            return  "'%s'" %  cell.decode('latin1')
         elif cell is None:
             return 'NULL'
         elif isinstance(cell, numpy.datetime64):
