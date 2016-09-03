@@ -152,6 +152,6 @@ class TeradataHook(DbApiHook):
         if len(row_chunk) > 0:
             cursor.executemany(prepared_stm, row_chunk, batch=True)
             logging.info('[%s] inserted %s rows', table, row_count)
-        logging.info("Inserted " + str(len(rows)) + " rows in " + str(round(time.time() - start_time, 2)) + " second(s)")
+        logging.info("Done loading. Loaded a total of " + str(len(rows)) + " rows in " + str(round(time.time() - start_time, 2)) + " second(s)")
         cursor.close()
         conn.close()
