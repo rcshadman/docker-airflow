@@ -61,4 +61,4 @@ class JdbcHook(DbApiHook):
         :param conn: The connection
         :return:
         """
-        conn.jconn.autocommit = autocommit
+        conn.jconn.autocommit = False

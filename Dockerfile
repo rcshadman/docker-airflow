@@ -128,6 +128,7 @@ COPY teradata_hook.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/hoo
 COPY teradata_operator.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
 COPY generic_btransfer.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
 COPY jdbc_transfer.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
+COPY jdbc_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
 COPY views.py /usr/local/lib/python2.7/dist-packages/airflow/www/
 COPY odbc.ini /opt/teradata/client/15.10/odbc_64/
 
