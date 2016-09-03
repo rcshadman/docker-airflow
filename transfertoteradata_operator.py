@@ -54,7 +54,7 @@ class TransferToTeradataOperator(BaseOperator):
             source_conn_id,
             destination_conn_id,
             preoperator=None,
-            batch=None,
+            batch=False,
             batch_size=5000,
             *args, **kwargs):
         super(TransferToTeradataOperator, self).__init__(*args, **kwargs)
