@@ -6,6 +6,8 @@ postgres:
         - POSTGRES_USER=airflow
         - POSTGRES_PASSWORD=airflow
         - POSTGRES_DB=airflow
+    ports:
+        - "5432:5432"
     volumes:
         - /opt/airflow/data:/var/lib/postgresql/data
 rabbitmq:
