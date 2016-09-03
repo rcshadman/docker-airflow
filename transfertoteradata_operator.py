@@ -54,6 +54,8 @@ class TransferToTeradataOperator(BaseOperator):
             source_conn_id,
             destination_conn_id,
             preoperator=None,
+            bulk=None,
+            batch_size=5000,
             *args, **kwargs):
         super(TransferToTeradataOperator, self).__init__(*args, **kwargs)
         self.sql = sql
@@ -61,6 +63,8 @@ class TransferToTeradataOperator(BaseOperator):
         self.source_conn_id = source_conn_id
         self.destination_conn_id = destination_conn_id
         self.preoperator = preoperator
+        self.bulk = bulk
+        self.batch_size = batch_size
 
     def execute(self, context):
         source_hook = BaseHook.get_hook(self.source_conn_id)
@@ -76,4 +80,8 @@ class TransferToTeradataOperator(BaseOperator):
             destination_hook.run(self.preoperator)
 
         logging.info("Inserting rows into {}".format(self.destination_conn_id))
-        destination_hook.bulk_insert_rows(table=self.destination_table, rows=iter(results), commit_every=10000)
+        logging.info(results)
+        if self.bulk:
+            destination_hook.bulk_insert_rows(table=self.destination_table, rows=iter(list(results)), commit_every=self.batch_size)
+        else:
+            destination_hook.insert_rows(table=self.destination_table, rows=iter(list(results)), commit_every=1000)
