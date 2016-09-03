@@ -157,7 +157,7 @@ class TeradataHook(DbApiHook):
         conn.close()
 
         def _serialize_cell(cell):
-            if isinstance(cell, basestring):
+            if isinstance(cell, str):
                 return cell.encode('utf-8')
             else:
                 return cell
