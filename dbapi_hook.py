@@ -198,7 +198,7 @@ class DbApiHook(BaseHook):
             sql = "INSERT INTO {0} {1} VALUES ({2});".format(
                 table,
                 target_fields,
-                ",".encode('latin1').join(values))
+                ",".join(values))
             cur.execute(sql)
             if commit_every and i % commit_every == 0:
                 #conn.commit()
@@ -213,7 +213,7 @@ class DbApiHook(BaseHook):
     @staticmethod
     def _serialize_cell(cell):
         if isinstance(cell, basestring):
-            return  "'%s'" %  cell.decode('latin1')
+            return  "'%s'" %  str(cell)
         elif cell is None:
             return 'NULL'
         elif isinstance(cell, numpy.datetime64):
