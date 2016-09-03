@@ -174,9 +174,6 @@ class DbApiHook(BaseHook):
             transaction. Set to 0 to insert all rows in one transaction.
         :type commit_every: int
         """
-	stats_list = [u'Statistik över sånger\n', u'Antal\tSång']
-        supports_autocommit = False
-	'\n'.join(stats_list)
         if target_fields:
             target_fields = ", ".join(target_fields)
             target_fields = "({})".format(target_fields)
@@ -184,9 +181,9 @@ class DbApiHook(BaseHook):
             target_fields = ''
         conn = self.get_conn()
         cur = conn.cursor()
-        #if self.supports_autocommit:
-            #cur.execute('SET autocommit = 0')
-        #conn.commit()
+        if self.supports_autocommit:
+            cur.execute('SET autocommit = 0')
+        conn.commit()
         i = 0
         for row in rows:
             i += 1
@@ -195,13 +192,17 @@ class DbApiHook(BaseHook):
                 l.append(self._serialize_cell(cell))
             values = tuple(l)
 	    logging.info(values)
-            sql = "INSERT INTO {0} {1} VALUES ({2});".format(table,target_fields,",".join(values))
+        logging.info(",".join(values))
+            sql = "INSERT INTO {0} {1} VALUES ({2});".format(
+                table,
+                target_fields,
+                ",".join(values))
             cur.execute(sql)
             if commit_every and i % commit_every == 0:
-                #conn.commit()
+                conn.commit()
                 logging.info(
                     "Loaded {i} into {table} rows so far".format(**locals()))
-                #conn.commit()
+        conn.commit()
         cur.close()
         conn.close()
         logging.info(
@@ -209,12 +210,8 @@ class DbApiHook(BaseHook):
 
     @staticmethod
     def _serialize_cell(cell):
-        def ensure_unicode(v):
-            if isinstance(v, str):
-                v = v.decode('latin1')
-            return unicode(v)
         if isinstance(cell, basestring):
-            return ensure_unicode(cell)
+            return unicode(cell.decode('latin1'))
         elif cell is None:
             return 'NULL'
         elif isinstance(cell, numpy.datetime64):
