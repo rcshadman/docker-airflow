@@ -138,6 +138,7 @@ class TeradataHook(DbApiHook):
         prepared_stm = """INSERT INTO {0} VALUES ({1})""".format(
             table,
             values)
+        print(prepared_stm)
         row_count = 0
         # Chunk the rows
         row_chunk = []
