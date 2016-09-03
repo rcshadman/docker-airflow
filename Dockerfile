@@ -130,7 +130,7 @@ COPY generic_btransfer.py /usr/local/lib/python2.7/dist-packages/airflow/contrib
 COPY jdbc_transfer.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
 COPY jdbc_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
 COPY dbapi_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
-COPY views.py /usr/local/lib/python2.7/dist-packages/airflow/www/
+#COPY views.py /usr/local/lib/python2.7/dist-packages/airflow/www/
 #COPY connection_form.js /usr/local/lib/python2.7/dist-packages/airflow/www/static/
 COPY __init__.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/hooks/
 COPY odbc.ini /opt/teradata/client/15.10/odbc_64/
