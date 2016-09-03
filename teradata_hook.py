@@ -102,25 +102,21 @@ class TeradataHook(DbApiHook):
                 """
         conn = self.get_conn()
         cur = conn.cursor()
-        print(str(rows))
-        #conn.commit()
         i = 0
         for row in rows:
             i += 1
             l = []
             for cell in row:
-                l.append(self._serialize_cell(cell))
+                l.append(cell)
             values = values = ",".join(['?' for cell in range(0, len(row))])
             sql = "INSERT INTO {0} VALUES ({1});".format(
                 table,
                 values)
-            print(sql)
             cur.execute(sql)
             if commit_every and i % commit_every == 0:
                 conn.commit()
                 logging.info(
                     "Loaded {i} into {table} rows so far".format(**locals()))
-        #conn.commit()
         cur.close()
         conn.close()
         logging.info(
@@ -155,8 +151,7 @@ class TeradataHook(DbApiHook):
         # Commit the leftover chunk
         if len(row_chunk) > 0:
             cursor.executemany(prepared_stm, row_chunk, batch=True)
-            ##conn.commit()
             logging.info('[%s] inserted %s rows', table, row_count)
-            logging.info("Inserted " + str(len(rows)) + " rows in " + str(round(time.time() - start_time, 2)) + " second(s)")
+        logging.info("Inserted " + str(len(rows)) + " rows in " + str(round(time.time() - start_time, 2)) + " second(s)")
         cursor.close()
         conn.close()
