@@ -132,7 +132,7 @@ COPY jdbc_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
 COPY dbapi_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
 #COPY views.py /usr/local/lib/python2.7/dist-packages/airflow/www/
 COPY odbc.ini /opt/teradata/client/15.10/odbc_64/
-RUN apt-get install pico vim
+RUN apt-get install vim
 
 RUN mkdir ${AIRFLOW_HOME}/files
 
