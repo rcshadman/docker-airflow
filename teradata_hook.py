@@ -158,13 +158,13 @@ class TeradataHook(DbApiHook):
 
         def _serialize_cell(cell):
             print(str(cell))
-            if isinstance(cell, str):
+            if isinstance(cell, basestring):
                 return cell.encode('utf-8')
             elif cell is None:
                 return 'NULL'
             elif isinstance(cell, numpy.datetime64):
                 return str(cell)
             elif isinstance(cell, datetime):
-                return cell.isoformat()
+                return str(cell)
             else:
                 return str(cell)
