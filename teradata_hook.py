@@ -161,8 +161,6 @@ class TeradataHook(DbApiHook):
         if isinstance(cell, str):
             #TODO: Fix this
             return cell.decode('latin1') #This assumes that input is in latin1
-        if isinstance(cell, unicode):
-            return cell
         elif cell is None:
             return None
         elif isinstance(cell, numpy.datetime64):
