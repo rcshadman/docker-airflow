@@ -161,7 +161,7 @@ class TeradataHook(DbApiHook):
         if isinstance(cell, basestring):
             return cell.decode('latin1')
         elif cell is None:
-            return 'NULL'
+            return None
         elif isinstance(cell, numpy.datetime64):
             return str(cell)
         elif isinstance(cell, datetime):
