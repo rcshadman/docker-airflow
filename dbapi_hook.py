@@ -195,10 +195,7 @@ class DbApiHook(BaseHook):
                 l.append(self._serialize_cell(cell))
             values = tuple(l)
 	    logging.info(values)
-            sql = "INSERT INTO {0} {1} VALUES ({2});".format(
-                table,
-                target_fields,
-                ",".join(values))
+            sql = "INSERT INTO {0} {1} VALUES ({2});".format(table,target_fields,",".join(values))
             cur.execute(sql)
             if commit_every and i % commit_every == 0:
                 #conn.commit()
@@ -211,9 +208,15 @@ class DbApiHook(BaseHook):
             "Done loading. Loaded a total of {i} rows".format(**locals()))
 
     @staticmethod
+    def ensure_unicode(v):
+        if isinstance(v, str):
+            v = v.decode('utf8')
+        return unicode(v)
+    @staticmethod
     def _serialize_cell(cell):
         if isinstance(cell, basestring):
-            return  "'%s'" %  cell
+
+            return  self.ensure_unicode("'%s'" %  cell)
         elif cell is None:
             return 'NULL'
         elif isinstance(cell, numpy.datetime64):
