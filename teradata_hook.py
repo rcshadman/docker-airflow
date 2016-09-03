@@ -109,7 +109,7 @@ class TeradataHook(DbApiHook):
             for cell in row:
                 l.append(cell)
             values = values = ",".join(['?' for cell in range(0, len(row))])
-            sql = "INSERT INTO {0} VALUES ({1});".format(
+            sql = b"INSERT INTO {0} VALUES ({1});".format(
                 table,
                 values)
             cur.execute(sql, l)
@@ -130,9 +130,8 @@ class TeradataHook(DbApiHook):
         """
         conn = self.get_conn()
         cursor = conn.cursor()
-        logging.info("Starting batch insert...")
         values = ",".join(['?' for row in range(0, len(rows[0]))])
-        prepared_stm = """INSERT INTO {0} VALUES ({1})""".format(
+        prepared_stm = b"""INSERT INTO {0} VALUES ({1})""".format(
             table,
             values)
         logging.info(prepared_stm)
