@@ -184,7 +184,7 @@ class DbApiHook(BaseHook):
             target_fields = ''
         conn = self.get_conn()
         cur = conn.cursor()
-        if self.supports_autocommit:
+        #if self.supports_autocommit:
             #cur.execute('SET autocommit = 0')
         #conn.commit()
         i = 0
