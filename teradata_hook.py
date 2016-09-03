@@ -109,9 +109,10 @@ class TeradataHook(DbApiHook):
             for cell in row:
                 l.append(cell)
             values = values = ",".join(['?' for cell in range(0, len(row))])
-            sql = b"INSERT INTO {0} VALUES ({1});".format(
+            sql = "INSERT INTO {0} VALUES ({1});".format(
                 table,
                 values)
+            logging.info(type(l[5]))
             cur.execute(sql, l)
             if commit_every and i % commit_every == 0:
                 conn.commit()
@@ -134,7 +135,6 @@ class TeradataHook(DbApiHook):
         prepared_stm = b"""INSERT INTO {0} VALUES ({1})""".format(
             table,
             values)
-        logging.info(prepared_stm)
         row_count = 0
         # Chunk the rows
         row_chunk = []
@@ -143,6 +143,7 @@ class TeradataHook(DbApiHook):
             row_count += 1
             if row_count % commit_every == 0:
                 cursor.executemany(prepared_stm, row_chunk, batch=True)
+                logging.info(type(row_chunk[5]))
                 #conn.commit()
                 logging.info('[%s] inserted %s rows', table, row_count)
                 # Empty chunk
