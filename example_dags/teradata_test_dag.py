@@ -65,7 +65,7 @@ def get_pandas_df_from_teradata(conn_id, sql):
     conn = TeradataHook(teradata_conn_id=conn_id)
     return conn.get_pandas_df(sql=sql)
 
-t7 = PythonOperator(
+t6 = PythonOperator(
     task_id='Dataframe_From_Teradata',
     python_callable=get_pandas_df_from_teradata,
     op_kwargs={
@@ -74,4 +74,4 @@ t7 = PythonOperator(
                },
     dag=dag)
 
-t0 >> t1 >> t2 >> t3 >> t4 >> t5 >> t6 >> t7
+t0 >> t1 >> t2 >> t3 >> t4 >> t5 >> t6
