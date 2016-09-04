@@ -54,8 +54,8 @@ class TeradataHook(DbApiHook):
                                 configureLogging=log,
                                 logFile=None,
                                 logLevel="ERROR",
-                                checkpointFile=False,
-                                runNumberFile=False).\
+                                checkpointFile=False
+                                ).\
                         connect(method="odbc",
                                   externalDSN=externalDsn,
                                   system=conn.host,
