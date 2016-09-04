@@ -1,4 +1,4 @@
-\* SQL para probar las queries múltiples
+\* SQL para probar las queries multiples
    Version 1.0v
 */
 DROP TABLE syslib.testData;

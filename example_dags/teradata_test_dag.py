@@ -22,6 +22,7 @@ dag = DAG('teradata-test', default_args=default_args, schedule_interval='*/30 * 
 t0 = TeradataOperator(sql="teradata.sql",
                      task_id='SQL_file_test',
                      teradata_conn_id='td',
+                     wait_for_downstream=True,
                      dag=dag)
 
 t1 = TransferToTeradataOperator(sql="SELECT * FROM mysql.testData",
@@ -30,9 +31,11 @@ t1 = TransferToTeradataOperator(sql="SELECT * FROM mysql.testData",
                      source_conn_id='infobright',
                      destination_conn_id='td',
                      unicode_source=False,
+                     wait_for_downstream=True,
                      dag=dag)
 t2 = TeradataOperator(sql="DELETE FROM syslib.testData",
                      task_id='SQL_Delete_Data_2',
+                     wait_for_downstream=True,
                      teradata_conn_id='td',
                      dag=dag)
 
@@ -43,12 +46,14 @@ t3 = TransferToTeradataOperator(sql="SELECT * FROM mysql.testData",
                      destination_conn_id='td',
                      batch=True,
                      batch_size=50,
+                     wait_for_downstream=True,
                      unicode_source=False,
                      dag=dag)
 
 t4 = TeradataOperator(sql="DELETE FROM syslib.testData",
                      task_id='SQL_Delete_Data_3',
                      teradata_conn_id='td',
+                     wait_for_downstream=True,
                      dag=dag)
 
 t5 = TransferToTeradataOperator(sql="SELECT * FROM mysql.testData",
@@ -58,6 +63,7 @@ t5 = TransferToTeradataOperator(sql="SELECT * FROM mysql.testData",
                      destination_conn_id='td',
                      batch=True,
                      batch_size=50,
+                     wait_for_downstream=True,
                      unicode_source=True,
                      dag=dag)
 
@@ -68,6 +74,7 @@ def get_pandas_df_from_teradata(conn_id, sql):
 t6 = PythonOperator(
     task_id='Dataframe_From_Teradata',
     python_callable=get_pandas_df_from_teradata,
+    wait_for_downstream=True,
     op_kwargs={
                'conn_id': 'td',
                 'sql': 'SELECT * FROM syslib.testData'
