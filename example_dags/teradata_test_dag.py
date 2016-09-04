@@ -17,7 +17,7 @@ default_args = {
     'retry_delay': timedelta(minutes=15)
     }
 
-dag = DAG('test-transfer', default_args=default_args)
+dag = DAG('teradata-hook-test', default_args=default_args)
 
 t0 = TeradataOperator(sql="DELETE FROM financial.prueba_final2",
                      task_id='SQL_Delete_Data',
