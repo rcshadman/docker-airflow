@@ -21,7 +21,7 @@ from datetime import datetime, timedelta
 seven_days_ago = datetime.combine(datetime.today() - timedelta(1),
                                   datetime.min.time())
 default_args = {
-    'owner': 'airflow',
+    'owner': 'tests',
     'depends_on_past': False,
     'start_date': seven_days_ago,
 }

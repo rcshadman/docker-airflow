@@ -21,7 +21,7 @@ from datetime import datetime, timedelta
 seven_days_ago = datetime.combine(datetime.today() - timedelta(1),
                                   datetime.min.time())
 default_args = {
-    'owner': 'airflow',
+    'owner': 'tests',
     'depends_on_past': False,
     'start_date': seven_days_ago,
 }
@@ -37,7 +37,7 @@ def loadBTEQ(filename):
 t1 = DockerOperator(
          docker_url='192.168.1.63:2375',
          image='bci/teradata-bteq-batch:15.10',
-         command=loadBTEQ('p1.sql'),
+         command=loadBTEQ('bteq.sql'),
          environment={
                     'HOST': '192.168.1.64',
                     'USERNAME': 'dbc',
