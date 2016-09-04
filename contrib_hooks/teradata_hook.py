@@ -122,7 +122,6 @@ class TeradataHook(DbApiHook):
             sql = "INSERT INTO {0} VALUES ({1});".format(
                 table,
                 values)
-            logging.info(l)
             cur.execute(sql, l)
             if commit_every and i % commit_every == 0:
                 conn.commit()
@@ -150,8 +149,10 @@ class TeradataHook(DbApiHook):
                 prepared_stm = """INSERT INTO {0} VALUES ({1})""".format(
                     table,
                     values)
+            serialized_row = []
             for cell in row:
-                row_chunk.append(self.serialize_cell(cell))
+                serialized_row.append(self.serialize_cell(cell))
+            row_chunk.append(serialized_row)
             row_count += 1
             if row_count % commit_every == 0:
                 logging.info(prepared_stm)
