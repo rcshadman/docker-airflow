@@ -13,11 +13,11 @@ default_args = {
     'email': ['felipe.lolas@bci.cl'],
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 3,
-    'retry_delay': timedelta(minutes=15)
+    'retries': 5,
+    'retry_delay': timedelta(minutes=5)
     }
 
-dag = DAG('teradata-hook-test', default_args=default_args)
+dag = DAG('teradata-test', default_args=default_args, schedule_interval='*/30 * * * *')
 
 t0 = TeradataOperator(sql="teradata.sql",
                      task_id='SQL_file_test',
