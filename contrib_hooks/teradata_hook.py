@@ -48,6 +48,11 @@ class TeradataHook(DbApiHook):
         ver = conn.extra_dejson.get('version', '1.0')
         log = conn.extra_dejson.get('logging', False)
 
+
+        teradata_log = logging.getLogger("teradata")
+        teradata_log.addHandler(logging.NullHandler())
+        teradata_log.propagate = False
+
         conn = teradata.UdaExec(appName=appn,
                                 version=ver,
                                 logConsole=log,
