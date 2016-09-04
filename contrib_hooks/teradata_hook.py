@@ -67,6 +67,7 @@ class TeradataHook(DbApiHook):
                                   username=conn.login,
                                   password=conn.password,
                                   charset='UTF8',
+                                  transactionMode='ANSI'
                                   );
         return conn
 
