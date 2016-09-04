@@ -155,6 +155,8 @@ class TeradataHook(DbApiHook):
             row_chunk.append(tuple(serialized_row))
             row_count += 1
             if row_count % commit_every == 0:
+                logging.info(prepared_stm)
+                logging.info(row_chunk)
                 cursor.executemany(prepared_stm, row_chunk, batch=True)
                 logging.info('Loaded %s into %s rows so far', row_count, table)
                 # Empty chunk
