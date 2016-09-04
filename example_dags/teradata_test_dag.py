@@ -64,7 +64,7 @@ t6 = TeradataOperator(sql="teradata.sql",
                      teradata_conn_id='td',
                      dag=dag)
 
-def get_pandas_df_from_sql(conn_id, sql):
+def get_pandas_df_from_teradata(conn_id, sql):
     conn = TeradataHook(teradata_conn_id=conn_id)
     return conn.get_pandas_df(sql=sql)
 
