@@ -44,7 +44,7 @@ class TransferToTeradataOperator(BaseOperator):
 
     template_fields = ('sql', 'destination_table', 'preoperator')
     template_ext = ('.sql', '.hql',)
-    ui_color = '#b0f07c'
+    ui_color = '#ec852a'
 
     @apply_defaults
     def __init__(
@@ -80,8 +80,8 @@ class TransferToTeradataOperator(BaseOperator):
             destination_hook.run(self.preoperator)
 
         if self.batch:
-            logging.info("Inserting rows into {} with batches".format(self.destination_conn_id))
-            destination_hook.bulk_insert_rows(table=self.destination_table, rows=results, commit_every=self.batch_size)
+            logging.info("Inserting {} rows into {} with a batch size of {}".format(len(results), self.destination_conn_id), self.batch_size)
+            destination_hook.bulk_insert_rows(table=self.destination_table, rows=iter(results), commit_every=self.batch_size)
         else:
-            logging.info("Inserting rows into {}".format(self.destination_conn_id))
-            destination_hook.insert_rows(table=self.destination_table, rows=results, commit_every=1000)
+            logging.info("Inserting {} rows into {}".format(len(results), self.destination_conn_id))
+            destination_hook.insert_rows(table=self.destination_table, rows=iter(results), commit_every=1000)
