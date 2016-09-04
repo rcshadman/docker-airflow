@@ -151,6 +151,7 @@ class TeradataHook(DbApiHook):
                     values)
             serialized_row = []
             for cell in row:
+                logging.info(cell)
                 serialized_row.append(self.serialize_cell(cell))
             row_chunk.append(serialized_row)
             row_count += 1
