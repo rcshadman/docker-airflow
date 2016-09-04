@@ -16,11 +16,12 @@ import teradata
 
 from airflow.hooks.dbapi_hook import DbApiHook
 from builtins import str
-import sys
 from past.builtins import basestring
 from datetime import datetime
 import numpy
 import logging
+import sys
+import re
 
 
 class TeradataHook(DbApiHook):
@@ -93,6 +94,41 @@ class TeradataHook(DbApiHook):
         cur.close()
         conn.close()
         return rows
+
+    def run(self, sql, autocommit=False, parameters=None):
+        """
+        Runs a command or a list of commands. Pass a list of sql
+        statements to the sql parameter to get them to execute
+        sequentially
+
+        :param sql: the sql statement to be executed (str) or a list of
+            sql statements to execute
+        :type sql: str or list
+        :param autocommit: What to set the connection's autocommit setting to
+            before executing the query.
+        :type autocommit: bool
+        :param parameters: The parameters to render the SQL query with.
+        :type parameters: mapping or iterable
+        """
+        conn = self.get_conn()
+        if isinstance(sql, basestring):
+            sql = [sql]
+
+        if self.supports_autocommit:
+            self.set_autocommit(conn, autocommit)
+
+        cur = conn.cursor()
+        for s in self.sqlsplit(sql):
+            if sys.version_info[0] < 3:
+                s = s.encode('utf-8')
+            logging.info(s)
+            if parameters is not None:
+                cur.execute(s, parameters)
+            else:
+                cur.execute(s)
+        cur.close()
+        conn.commit()
+        conn.close()
 
     def insert_rows(self, table, rows, commit_every=1000, unicode_source=True):
         """
@@ -183,3 +219,54 @@ class TeradataHook(DbApiHook):
             return unicode(cell.isoformat())
         else:
             return unicode(str(cell))
+
+    def isString(self, value):
+        # Implement python version specific setup.
+        if sys.version_info[0] == 2:
+            return isinstance(value, basestring)  # @UndefinedVariable
+        else:
+            return isinstance(value, str)  # @UndefinedVariable
+
+    def sqlsplit(self, sql, delimiter=";"):
+        """A generator function for splitting out SQL statements according to the
+         specified delimiter. Ignores delimiter when in strings or comments."""
+        tokens = re.split("(--|'|\n|" + re.escape(delimiter) + "|\"|/\*|\*/)",
+                          sql if self.isString(sql) else delimiter.join(sql))
+        statement = []
+        inComment = False
+        inLineComment = False
+        inString = False
+        inQuote = False
+        for t in tokens:
+            if not t:
+                continue
+            if inComment:
+                if t == "*/":
+                    inComment = False
+            elif inLineComment:
+                if t == "\n":
+                    inLineComment = False
+            elif inString:
+                if t == '"':
+                    inString = False
+            elif inQuote:
+                if t == "'":
+                    inQuote = False
+            elif t == delimiter:
+                sql = "".join(statement).strip()
+                if sql:
+                    yield sql
+                statement = []
+                continue
+            elif t == "'":
+                inQuote = True
+            elif t == '"':
+                inString = True
+            elif t == "/*":
+                inComment = True
+            elif t == "--":
+                inLineComment = True
+            statement.append(t)
+        sql = "".join(statement).strip()
+        if sql:
+            yield sql
