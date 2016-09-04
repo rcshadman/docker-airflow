@@ -32,6 +32,11 @@ from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 
+# IMPORTANT
+# Add credentials.json on homedir
+# if the operator doesn't find on homedir, it will ask for it
+# Use this operator using airflow test for getting a credentials.json
+
 class GmailAPIOperator(BaseOperator):
     """
     Base Gmail Operator.

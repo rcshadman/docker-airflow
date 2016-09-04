@@ -110,30 +110,20 @@ ARG TD_CLIENT_PATH=/opt/teradata/client
 # ODBC TDICU
 ENV ODBCINST $TD_CLIENT_PATH/$TD_VERSION/odbc_64/odbcinst.ini
 ENV ODBCINI  $TD_CLIENT_PATH/$TD_VERSION/odbc_64/odbc.ini
-ENV TD_ICU_DATA $TD_CLIENT_PATH/$TD_VERSION/tdicu/lib64
-ENV MANPATH $TD_CLIENT_PATH/$TD_VERSION/odbc_64/help/man:$MANPATH
-ENV NLSPATH $TD_CLIENT_PATH/$TD_VERSION/odbc_64/msg/%N:$NLSPATH
-ENV COPLIB $TD_CLIENT_PATH/$TD_VERSION/lib64
-ENV COPERR $TD_CLIENT_PATH/$TD_VERSION/lib64
-ENV LD_LIBRARY_PATH $TD_CLIENT_PATH/$TD_VERSION/lib64:/usr/lib64
 
-COPY script/entrypoint.sh ${AIRFLOW_HOME}/entrypoint.sh
-COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
-
-COPY mysql_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
-COPY docker_operator.py /usr/local/lib/python2.7/dist-packages/airflow/operators/
-COPY hipchat_operator.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
-# Teradata
+# Teradata Airflow Connection
 COPY teradata_hook.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/hooks/
 COPY teradata_operator.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
 COPY transfertoteradata_operator.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
-COPY jdbc_transfer.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
-COPY jdbc_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
-COPY dbapi_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
-#COPY views.py /usr/local/lib/python2.7/dist-packages/airflow/www/
-#COPY connection_form.js /usr/local/lib/python2.7/dist-packages/airflow/www/static/
 COPY __init__.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/hooks/
-#COPY odbc.ini /opt/teradata/client/15.10/odbc_64/
+
+# Modifications
+COPY mysql_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
+COPY docker_operator.py /usr/local/lib/python2.7/dist-packages/airflow/operators/
+
+# Configuration
+COPY script/entrypoint.sh ${AIRFLOW_HOME}/entrypoint.sh
+COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
 RUN mkdir ${AIRFLOW_HOME}/files
 

@@ -179,17 +179,15 @@ class DockerOperator(BaseOperator):
             exit_code = self.cli.wait(self.container['Id'])
 
             if exit_code != 0:
-                if self.container['Id']:
+                if self.container['Id'] and self.destroy_on_finish:
                     self.cli.remove_container(self.container['Id'])
                 raise AirflowException('docker container failed')
 
             if self.xcom_push:
+                logs = self.cli.logs(container=self.container['Id'])
                 if self.destroy_on_finish:
-                    logs = self.cli.logs(container=self.container['Id']) if self.xcom_all else str(line.strip())
                     self.cli.remove_container(self.container['Id'])
-                    return logs
-                else:
-                    return self.cli.logs(container=self.container['Id']) if self.xcom_all else str(line.strip())
+                return logs if self.xcom_all else str(line.strip())
 
     def get_command(self):
         if self.command is not None and self.command.strip().find('[') == 0:
