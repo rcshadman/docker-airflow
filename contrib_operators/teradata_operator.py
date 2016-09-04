@@ -44,4 +44,4 @@ class TeradataOperator(BaseOperator):
     def execute(self, context):
         logging.info('Executing: ' + str(self.sql))
         hook = TeradataHook(teradata_conn_id=self.teradata_conn_id)
-        hook.run(self.sql)
+        hook.run(self.sql.split(';'))
