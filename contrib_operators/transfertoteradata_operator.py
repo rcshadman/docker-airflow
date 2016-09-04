@@ -55,6 +55,7 @@ class TransferToTeradataOperator(BaseOperator):
             destination_conn_id,
             preoperator=None,
             batch=False,
+            unicode_source=None,
             batch_size=5000,
             *args, **kwargs):
         super(TransferToTeradataOperator, self).__init__(*args, **kwargs)
@@ -65,6 +66,7 @@ class TransferToTeradataOperator(BaseOperator):
         self.preoperator = preoperator
         self.batch = batch
         self.batch_size = batch_size
+        self.unicode_source = unicode_source
 
     def execute(self, context):
         source_hook = BaseHook.get_hook(self.source_conn_id)
@@ -80,8 +82,8 @@ class TransferToTeradataOperator(BaseOperator):
             destination_hook.run(self.preoperator)
 
         if self.batch:
-            logging.info("Inserting {} rows into {} with a batch size of {}".format(len(results), self.destination_conn_id), self.batch_size)
+            logging.info("Inserting {} rows into {} with a batch size of {}".format(len(results), self.destination_conn_id), self.batch_size, unicode_source=self.unicode_source)
             destination_hook.bulk_insert_rows(table=self.destination_table, rows=iter(results), commit_every=self.batch_size)
         else:
             logging.info("Inserting {} rows into {}".format(len(results), self.destination_conn_id))
-            destination_hook.insert_rows(table=self.destination_table, rows=iter(results), commit_every=1000)
+            destination_hook.insert_rows(table=self.destination_table, rows=iter(results), commit_every=1000, unicode_source=self.unicode_source )
