@@ -141,19 +141,19 @@ class TeradataHook(DbApiHook):
         self.unicode_source = unicode_source
         conn = self.get_conn()
         cursor = conn.cursor()
-        values = ",".join(['?' for row in range(0, len(rows[0]))])
-        prepared_stm = """INSERT INTO {0} VALUES ({1})""".format(
-            table,
-            values)
         row_count = 0
         # Chunk the rows
         row_chunk = []
         for row in rows:
+            if row_count == 0:
+                values = ",".join(['?' for cell in range(0, len(row))])
+                prepared_stm = """INSERT INTO {0} VALUES ({1})""".format(
+                    table,
+                    values)
             row_chunk.append(self.serialize_cell(row))
             row_count += 1
             if row_count % commit_every == 0:
                 cursor.executemany(prepared_stm, row_chunk, batch=True)
-                logging.info(type(row_chunk[5]))
                 logging.info('Loaded %s into %s rows so far', row_count, table)
                 # Empty chunk
                 row_chunk = []
