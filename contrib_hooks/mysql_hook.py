@@ -128,7 +128,7 @@ class MySqlHook(DbApiHook):
             cur.execute("""
                 LOAD DATA INFILE '{remote_filepath}'
                 INTO TABLE {database}.{table}
-		CHARACTER SET UTF8
+		        CHARACTER SET UTF8
                 FIELDS TERMINATED BY '{sep}'
                 """.format(**locals()))
             conn.commit()

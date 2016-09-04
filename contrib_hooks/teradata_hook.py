@@ -141,7 +141,7 @@ class TeradataHook(DbApiHook):
         # Chunk the rows
         row_chunk = []
         for row in rows:
-            row_chunk.append(row)
+            row_chunk.append(self.serialize_cell(row))
             row_count += 1
             if row_count % commit_every == 0:
                 cursor.executemany(prepared_stm, row_chunk, batch=True)
