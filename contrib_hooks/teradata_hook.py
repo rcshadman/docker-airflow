@@ -171,7 +171,7 @@ class TeradataHook(DbApiHook):
         if isinstance(cell, basestring):
             #TODO: Fix this
             if self.unicode_source:
-                return cell
+                return 'ERROR'
             else:
                 return 'ERROR'#This assumes that input is in latin1
         elif cell is None:
