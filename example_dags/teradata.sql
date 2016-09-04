@@ -1,9 +1,10 @@
-SELECT * FROM financial.trans;
-SELECT * FROM financial.prueba_final2;
-SELECT * FROM financial.prueba_final2;
-SELECT * FROM financial.prueba_final2;
-SELECT * FROM financial.prueba_final2;
-SELECT * FROM financial.prueba_final2;
-SELECT * FROM financial.prueba_final2;
-SELECT * FROM financial.prueba_final2;
-SELECT COUNT(*) FROM financial.trans;
+DROP TABLE syslib.testData;
+CREATE TABLE syslib.testData (
+  nam varchar(255) ,
+  mail varchar(255) ,
+  created_at varchar(255),
+  rut varchar(15) ,
+  dv varchar(15) ,
+  prob varchar(100)
+)
+primary index(rut, prob);

@@ -19,10 +19,11 @@ default_args = {
 
 dag = DAG('teradata-hook-test', default_args=default_args)
 
-t0 = TeradataOperator(sql="DELETE FROM syslib.testData",
-                     task_id='SQL_Delete_Data',
+t0 = TeradataOperator(sql="teradata.sql",
+                     task_id='SQL_file_test',
                      teradata_conn_id='td',
                      dag=dag)
+
 t1 = TransferToTeradataOperator(sql="SELECT * FROM mysql.testData",
                      task_id='Load_to_Teradata',
                      destination_table='syslib.testData',
@@ -41,11 +42,11 @@ t3 = TransferToTeradataOperator(sql="SELECT * FROM mysql.testData",
                      source_conn_id='infobright',
                      destination_conn_id='td',
                      batch=True,
-                     batch_size=100,
+                     batch_size=50,
                      unicode_source=False,
                      dag=dag)
 
-t4 = TeradataOperator(sql="teradata.sql",
+t4 = TeradataOperator(sql="DELETE FROM syslib.testData",
                      task_id='SQL_Delete_Data_3',
                      teradata_conn_id='td',
                      dag=dag)
@@ -56,12 +57,8 @@ t5 = TransferToTeradataOperator(sql="SELECT * FROM mysql.testData",
                      source_conn_id='infobright_jdbc',
                      destination_conn_id='td',
                      batch=True,
-                     batch_size=100,
-                     dag=dag)
-
-t6 = TeradataOperator(sql="teradata.sql",
-                     task_id='SQL_file_test',
-                     teradata_conn_id='td',
+                     batch_size=50,
+                     unicode_source=True,
                      dag=dag)
 
 def get_pandas_df_from_teradata(conn_id, sql):
