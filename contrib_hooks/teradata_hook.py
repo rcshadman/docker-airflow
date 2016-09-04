@@ -155,8 +155,6 @@ class TeradataHook(DbApiHook):
             row_chunk.append(tuple(serialized_row))
             row_count += 1
             if row_count % commit_every == 0:
-                logging.info(prepared_stm)
-                logging.info(row_chunk)
                 cursor.executemany(prepared_stm, row_chunk, batch=True)
                 logging.info('Loaded %s into %s rows so far', row_count, table)
                 # Empty chunk
@@ -164,8 +162,8 @@ class TeradataHook(DbApiHook):
         # Commit the leftover chunk
         if len(row_chunk) > 0:
             cursor.executemany(prepared_stm, row_chunk, batch=True)
-            logging.info('[%s] inserted %s rows', table, row_count)
-        logging.info("Done loading. Loaded a total of " + str(len(rows)) + " rows")
+            logging.info('Loaded %s into %s rows so far', row_count, table)
+        logging.info("Done loading. Loaded a total of {} rows".format(row_count))
         cursor.close()
         conn.close()
 
@@ -175,7 +173,6 @@ class TeradataHook(DbApiHook):
             if self.unicode_source:
                 return unicode(cell)
             else:
-                logging.info('No unicode')
                 return unicode(cell.decode('latin1'))#This assumes that input is in latin1
         elif cell is None:
             return None
