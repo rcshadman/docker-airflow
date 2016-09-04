@@ -19,29 +19,29 @@ default_args = {
 
 dag = DAG('teradata-hook-test', default_args=default_args)
 
-t0 = TeradataOperator(sql="DELETE FROM financial.prueba_final2",
+t0 = TeradataOperator(sql="DELETE FROM syslib.testData",
                      task_id='SQL_Delete_Data',
                      teradata_conn_id='td',
                      dag=dag)
-t1 = TransferToTeradataOperator(sql="SELECT * FROM mysql.prueba_final2",
+t1 = TransferToTeradataOperator(sql="SELECT * FROM mysql.testData",
                      task_id='Load_to_Teradata',
-                     destination_table='financial.prueba_final2',
+                     destination_table='syslib.testData',
                      source_conn_id='infobright',
                      destination_conn_id='td',
                      unicode_source=False,
                      dag=dag)
-t2 = TeradataOperator(sql="DELETE FROM financial.prueba_final2",
+t2 = TeradataOperator(sql="DELETE FROM syslib.testData",
                      task_id='SQL_Delete_Data_2',
                      teradata_conn_id='td',
                      dag=dag)
 
-t3 = TransferToTeradataOperator(sql="SELECT * FROM mysql.prueba_final2",
+t3 = TransferToTeradataOperator(sql="SELECT * FROM mysql.testData",
                      task_id='Load_to_Teradata_Bulk',
-                     destination_table='financial.prueba_final2',
+                     destination_table='syslib.testData',
                      source_conn_id='infobright',
                      destination_conn_id='td',
                      batch=True,
-                     batch_size=3,
+                     batch_size=100,
                      unicode_source=False,
                      dag=dag)
 
@@ -50,13 +50,13 @@ t4 = TeradataOperator(sql="teradata.sql",
                      teradata_conn_id='td',
                      dag=dag)
 
-t5 = TransferToTeradataOperator(sql="SELECT * FROM mysql.prueba_final2",
+t5 = TransferToTeradataOperator(sql="SELECT * FROM mysql.testData",
                      task_id='Load_to_Teradata_Bulk_Unicode',
-                     destination_table='financial.prueba_final2',
+                     destination_table='syslib.testData',
                      source_conn_id='infobright_jdbc',
                      destination_conn_id='td',
                      batch=True,
-                     batch_size=3,
+                     batch_size=100,
                      dag=dag)
 
 t6 = TeradataOperator(sql="teradata.sql",
@@ -73,7 +73,7 @@ t7 = PythonOperator(
     python_callable=get_pandas_df_from_teradata,
     op_kwargs={
                'conn_id': 'td',
-                'sql': 'SELECT * FROM financial.prueba_final2'
+                'sql': 'SELECT * FROM syslib.testData'
                },
     dag=dag)
 
