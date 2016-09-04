@@ -46,7 +46,7 @@ t3 = TransferToTeradataOperator(sql="SELECT * FROM mysql.prueba_final2",
                      dag=dag)
 
 t4 = TeradataOperator(sql="teradata.sql",
-                     task_id='SQL_Delete_Data_2',
+                     task_id='SQL_Delete_Data_3',
                      teradata_conn_id='td',
                      dag=dag)
 
