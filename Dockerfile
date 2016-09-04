@@ -107,19 +107,19 @@ ln -sfn /opt/teradata/client/15.10/lib64/libddicu27.so /usr/lib/libddicu27.so
 ARG TD_VERSION=15.10
 ARG TD_CLIENT_PATH=/opt/teradata/client
 
-# ODBC TDICU
+# ODBC
 ENV ODBCINST $TD_CLIENT_PATH/$TD_VERSION/odbc_64/odbcinst.ini
 ENV ODBCINI  $TD_CLIENT_PATH/$TD_VERSION/odbc_64/odbc.ini
 
 # Teradata Airflow Connection
-COPY teradata_hook.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/hooks/
-COPY teradata_operator.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
-COPY transfertoteradata_operator.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
-COPY __init__.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/hooks/
+COPY contrib_hooks/teradata_hook.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/hooks/
+COPY contrib_operators/teradata_operator.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
+COPY contrib_operators/transfertoteradata_operator.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/operators/
+COPY extras/__init__.py /usr/local/lib/python2.7/dist-packages/airflow/contrib/hooks/
 
 # Modifications
-COPY mysql_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
-COPY docker_operator.py /usr/local/lib/python2.7/dist-packages/airflow/operators/
+COPY contrib_hooks/mysql_hook.py /usr/local/lib/python2.7/dist-packages/airflow/hooks/
+COPY contrib_operators/docker_operator.py /usr/local/lib/python2.7/dist-packages/airflow/operators/
 
 # Configuration
 COPY script/entrypoint.sh ${AIRFLOW_HOME}/entrypoint.sh
