@@ -81,4 +81,17 @@ t6 = PythonOperator(
                },
     dag=dag)
 
-t0 >> t1 >> t2 >> t3 >> t4 >> t5 >> t6
+
+t7 = TransferToTeradataOperator(sql="SELECT * FROM mysql.datos",
+                     task_id='Load_to_Teradata_Bulk_Split',
+                     destination_table='syslib.datos',
+                     source_conn_id='infobright',
+                     destination_conn_id='td',
+                     batch=True,
+                     batch_size=50000,
+                     wait_for_downstream=True,
+                     unicode_source=False,
+                     dag=dag)
+
+
+t0 >> t1 >> t2 >> t3 >> t4 >> t5 >> t6 >> t7
